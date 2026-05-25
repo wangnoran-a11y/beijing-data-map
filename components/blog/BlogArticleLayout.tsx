@@ -14,7 +14,7 @@ const BlogArticleLayout = ({
   <main className="min-h-screen bg-slate-50 text-slate-900">
     <div className="mx-auto max-w-4xl px-6 pt-8">
       <Link
-        to="/blog/"
+        href="/blog/"
         className="text-sm text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline"
       >
         Back to blog
