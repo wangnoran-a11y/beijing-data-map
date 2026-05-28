@@ -12,9 +12,9 @@ export default function Home() {
       <Header />
       <HeroSearch />
       <SourceNav />
+      <IndustryZone />
       <ResourceStatus />
       <HotResources />
-      <IndustryZone />
       <ResourceCards />
     </main>
   );

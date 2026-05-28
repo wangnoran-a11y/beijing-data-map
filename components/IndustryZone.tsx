@@ -4,65 +4,133 @@ import Link from "next/link";
 import {
   Building2,
   Car,
-  Heart,
+  HeartPulse,
   GraduationCap,
-  Zap,
-  Landmark,
-  ShoppingCart,
+  Plane,
   Leaf,
-  Wifi,
-  Factory,
-  Home,
   Users,
+  ArrowRight,
+  Flame,
+  Sparkles,
 } from "lucide-react";
 
 const industries = [
-  { icon: Landmark, name: "政务数据", count: 2340, color: "#C41E3A" },
-  { icon: Car, name: "交通出行", count: 1856, color: "#E63946" },
-  { icon: Heart, name: "医疗健康", count: 1420, color: "#C41E3A" },
-  { icon: GraduationCap, name: "教育科研", count: 1180, color: "#D4A574" },
-  { icon: Building2, name: "金融服务", count: 980, color: "#1A1A2E" },
-  { icon: Zap, name: "能源环保", count: 860, color: "#E63946" },
-  { icon: ShoppingCart, name: "商业消费", count: 760, color: "#C41E3A" },
-  { icon: Leaf, name: "农业农村", count: 640, color: "#059669" },
-  { icon: Wifi, name: "通信科技", count: 580, color: "#1A1A2E" },
-  { icon: Factory, name: "工业制造", count: 520, color: "#D4A574" },
-  { icon: Home, name: "住房建设", count: 460, color: "#E63946" },
-  { icon: Users, name: "社会民生", count: 380, color: "#C41E3A" },
-];
+  { icon: Building2, name: "金融服务", desc: "企业征信、风险评估、产业金融", hot: 98 },
+  { icon: HeartPulse, name: "医疗健康", desc: "医保、卫健、健康管理", hot: 95 },
+  { icon: Car, name: "交通出行", desc: "车辆、物流、交通运行监测", hot: 92 },
+  { icon: GraduationCap, name: "教育科研", desc: "教育资源、科研创新、人才分析", hot: 88 },
+  { icon: Leaf, name: "农业农村", desc: "农业监测、乡村治理、农产品流通", hot: 84 },
+  { icon: Users, name: "社会民生", desc: "婚姻登记、社会救助、学历学籍", hot: 82 },
+  { icon: Plane, name: "低空经济", desc: "飞行监管、物流运输、空域服务", hot: 80 },
+].sort((a, b) => b.hot - a.hot);
 
 export default function IndustryZone() {
   return (
-    <section className="py-16 px-6 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">行业专区</h2>
-            <p className="text-gray-500 text-sm">按行业分类浏览数据资源</p>
+    <section className="bg-white px-5 py-5 sm:px-8 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="mx-auto w-full max-w-[1720px]">
+        <div className="mb-4 flex items-start justify-between">
+          <div className="flex items-start gap-5">
+            <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C41E3A]/10">
+              <Flame className="h-6 w-6 text-[#C41E3A]" />
+            </div>
+
+            <div>
+              <h2 className="text-[28px] font-bold tracking-tight text-gray-950 lg:text-[30px]">
+                行业专区
+              </h2>
+              <p className="mt-1 text-[15px] text-gray-500 lg:text-[16px]">
+                面向重点产业场景，汇聚行业数据资源与数据产品，支撑数据赋能产业高质量发展
+              </p>
+            </div>
           </div>
-          <Link href="/data-catalog" className="text-sm text-[#C41E3A] hover:text-[#E63946] transition-colors">
-            查看全部 →
+
+          <Link
+            href="/industry"
+            className="mt-2 flex items-center gap-2 rounded-full bg-[#C41E3A] px-5 py-2 text-sm font-bold text-white shadow-lg shadow-red-100 transition-all hover:bg-[#A91830]"
+          >
+            查看全部
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {industries.map((item, index) => (
+        <div className="rounded-[30px] border border-red-100 bg-gradient-to-br from-red-50/45 via-white to-gray-50 p-4 shadow-sm sm:p-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {industries.map((item, index) => {
+              const Icon = item.icon;
+              const isTop = index === 0;
+
+              return (
+                <Link
+                  href="/industry"
+                  key={item.name}
+                  className={`group relative flex min-h-[175px] flex-col overflow-hidden rounded-[24px] p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                    isTop
+                      ? "bg-[#111827] text-white"
+                      : "border border-red-100 bg-white/95 text-gray-950 hover:border-red-200"
+                  }`}
+                >
+                  <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-[#C41E3A]/15 blur-3xl" />
+
+                  <div className="relative mb-5 flex items-start justify-between">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
+                        isTop ? "bg-[#C41E3A]" : "bg-[#C41E3A]/10"
+                      }`}
+                    >
+                      <Icon className={`h-6 w-6 ${isTop ? "text-white" : "text-[#C41E3A]"}`} />
+                    </div>
+
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold ${
+                        isTop ? "bg-white/10 text-red-100" : "bg-red-50 text-[#C41E3A]"
+                      }`}
+                    >
+                      热度 {item.hot}
+                    </span>
+                  </div>
+
+                  <div className="relative mt-auto">
+                    {isTop && (
+                      <div className="mb-2 flex items-center gap-1 text-xs font-bold text-[#D4A574]">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        推荐专区
+                      </div>
+                    )}
+
+                    <h3 className={`text-[22px] font-black ${!isTop && "group-hover:text-[#C41E3A]"}`}>
+                      {item.name}
+                    </h3>
+
+                    <p className={`mt-2 text-[15px] leading-6 ${isTop ? "text-white/60" : "text-gray-500"}`}>
+                      {item.desc}
+                    </p>
+
+                    <div className={`mt-4 flex items-center gap-2 text-sm font-bold ${isTop ? "text-white" : "text-[#C41E3A]"}`}>
+                      进入专区
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+
             <Link
-              href="/data-catalog"
-              key={item.name}
-              className="glass-card rounded-xl p-4 text-center cursor-pointer group hover:scale-105 transition-all duration-300 animate-slide-up"
-              style={{ animationDelay: `${index * 0.05}s` }}
+              href="/industry"
+              className="group flex min-h-[175px] flex-col items-center justify-center rounded-[24px] border border-dashed border-red-200 bg-white/80 p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#C41E3A] hover:bg-red-50/40 hover:shadow-lg"
             >
-              <div
-                className="w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center transition-all group-hover:scale-110"
-                style={{ backgroundColor: `${item.color}10` }}
-              >
-                <item.icon className="w-6 h-6" style={{ color: item.color }} />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#C41E3A]/10 text-3xl font-light text-[#C41E3A]">
+                +
               </div>
-              <h3 className="text-sm font-medium text-gray-900 mb-1">{item.name}</h3>
-              <p className="text-xs text-gray-500">{item.count} 个数据集</p>
+
+              <h3 className="text-[23px] font-black text-gray-900 group-hover:text-[#C41E3A]">
+                更多
+              </h3>
+
+              <p className="mt-2 max-w-[240px] text-center text-[14px] leading-6 text-gray-500">
+                查看更多产业数据专区与数据产品服务
+              </p>
             </Link>
-          ))}
+          </div>
         </div>
       </div>
     </section>
