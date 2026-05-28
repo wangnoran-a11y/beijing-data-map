@@ -54,7 +54,7 @@ export default function SourceNav() {
               </h2>
 
               <p className="mt-1 text-[15px] text-gray-500 lg:text-[16px]">
-                汇聚北京市公共数据资源与国家部委数据资源，形成统一发现入口
+                汇聚北京市公共数据资源与国家部委公共数据资源，形成统一发现入口
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function SourceNav() {
           <div className="rounded-[30px] border border-red-100 bg-red-50/40 p-4 shadow-sm sm:p-5 lg:p-6">
             <div className="mb-6 flex items-center gap-3">
               <Landmark className="h-6 w-6 text-[#C41E3A]" />
-              <h3 className="text-[24px] font-bold text-gray-950">北京市</h3>
+              <h3 className="text-[24px] font-bold text-gray-950">北京市公共数据资源</h3>
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -117,7 +117,7 @@ export default function SourceNav() {
           <div className="rounded-[30px] border border-gray-100 bg-gray-50/80 p-4 shadow-sm sm:p-5 lg:p-6">
             <div className="mb-6 flex items-center gap-3">
               <Landmark className="h-6 w-6 text-[#D4A574]" />
-              <h3 className="text-[24px] font-bold text-gray-950">部委</h3>
+              <h3 className="text-[24px] font-bold text-gray-950">国家部委公共数据资源</h3>
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
