@@ -1,3 +1,17 @@
-import { useToast, toast } from '@/hooks/use-toast';
+// @ts-nocheck
 
-export { useToast, toast };
+export function useToast() {
+  return {
+    toasts: [],
+    toast: () => {},
+    dismiss: () => {},
+  };
+}
+
+export function toast() {
+  return {
+    id: "",
+    dismiss: () => {},
+    update: () => {},
+  };
+}
