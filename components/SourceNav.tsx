@@ -12,7 +12,7 @@ import {
   Users,
   Sprout,
   LineChart,
-  BadgeStar,
+  BadgeCheck,
 } from "lucide-react";
 
 const citySources = [
@@ -28,7 +28,7 @@ const ministrySources = [
   { name: "民政部", desc: "国家部委数据资源", icon: Users },
   { name: "农业农村部", desc: "国家部委数据资源", icon: Sprout },
   { name: "市场监管总局", desc: "国家部委数据资源", icon: LineChart },
-  { name: "国务院国资委", desc: "国家部委数据资源", icon: BadgeStar },
+  { name: "国务院国资委", desc: "国家部委数据资源", icon: BadgeCheck },
 ];
 
 export default function SourceNav() {
