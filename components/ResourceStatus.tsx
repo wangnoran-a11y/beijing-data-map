@@ -47,9 +47,9 @@ const focus = [
 
 export default function ResourceStatus() {
   return (
-    <section className="bg-white px-5 py-4 sm:px-8 lg:px-10 xl:px-14 2xl:px-20">
-      <div className="mx-auto w-full max-w-[1720px]">
-        <div className="mb-4 flex items-start justify-between">
+    <section className="bg-white px-5 py-10 sm:px-8 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="mx-auto w-full max-w-[1440px]">
+        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-5">
             <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-50">
               <Activity className="h-6 w-6 text-green-500" />
@@ -65,89 +65,85 @@ export default function ResourceStatus() {
             </div>
           </div>
 
-          <div className="mt-3 whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-600">
+          <div className="w-fit rounded-full border border-green-200 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-600">
             系统运行正常
           </div>
         </div>
 
-        <div className="h-[calc(100vh-205px)] min-h-[520px] rounded-[28px] border border-gray-100 bg-gradient-to-br from-white via-gray-50 to-red-50/30 p-4 shadow-sm sm:p-5">
-          <div className="grid h-full grid-cols-1 gap-5 xl:grid-cols-12">
-            <div className="min-h-0 xl:col-span-4">
-              <div className="flex h-full flex-col overflow-hidden rounded-[24px] bg-[#111827] p-5 text-white shadow-xl">
-                <div className="mb-4 flex items-start justify-between">
-                  <div>
-                    <p className="text-sm text-white/55">平台综合运营指数</p>
+        <div className="rounded-[28px] border border-gray-100 bg-gradient-to-br from-white via-gray-50 to-red-50/30 p-4 shadow-sm sm:p-5">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[0.9fr_1.7fr]">
+            <div className="rounded-[24px] bg-[#111827] p-5 text-white shadow-xl">
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-white/55">平台综合运营指数</p>
 
-                    <div className="mt-2 flex flex-wrap items-end gap-3">
-                      <h3 className="text-[40px] font-black leading-none">
-                        94.2
-                      </h3>
+                  <div className="mt-2 flex flex-wrap items-end gap-3">
+                    <h3 className="text-[40px] font-black leading-none">
+                      94.2
+                    </h3>
 
-                      <span className="mb-1 rounded-full bg-[#C41E3A]/20 px-2.5 py-1 text-xs font-semibold text-red-300">
-                        较上期 +3.6%
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="relative flex h-13 w-13 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7F1D1D] via-[#C41E3A] to-[#D4383F] p-3 shadow-[0_18px_35px_rgba(196,30,58,0.35)]">
-                    <TrendingUp className="h-7 w-7 text-white" />
+                    <span className="mb-1 rounded-full bg-[#C41E3A]/20 px-2.5 py-1 text-xs font-semibold text-red-300">
+                      较上期 +3.6%
+                    </span>
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <div className="mb-2 flex items-center justify-between text-xs text-white/45">
-                    <span>运行质量</span>
-                    <span>优秀</span>
-                  </div>
+                <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7F1D1D] via-[#C41E3A] to-[#D4383F] p-3 shadow-[0_18px_35px_rgba(196,30,58,0.35)]">
+                  <TrendingUp className="h-7 w-7 text-white" />
+                </div>
+              </div>
 
-                  <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full w-[94%] rounded-full bg-gradient-to-r from-[#C41E3A] via-[#D4383F] to-[#D4A574]" />
-                  </div>
+              <div className="mb-4">
+                <div className="mb-2 flex items-center justify-between text-xs text-white/45">
+                  <span>运行质量</span>
+                  <span>优秀</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5">
-                  {indexItems.map((item) => (
+                <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full w-[94%] rounded-full bg-gradient-to-r from-[#C41E3A] via-[#D4383F] to-[#D4A574]" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {indexItems.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-xl bg-white/8 px-3 py-2.5"
+                  >
+                    <p className="text-xs text-white/45">{item.label}</p>
+                    <p className="mt-1 text-[20px] font-black">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-white/80">
+                    实时监测
+                  </span>
+
+                  <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[11px] font-semibold text-emerald-300">
+                    LIVE
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {monitorItems.map((item) => (
                     <div
-                      key={item.label}
-                      className="rounded-xl bg-white/8 px-3 py-2.5"
+                      key={item}
+                      className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-3 py-2"
                     >
-                      <p className="text-xs text-white/45">{item.label}</p>
-                      <p className="mt-1 text-[20px] font-black">
-                        {item.value}
-                      </p>
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />
+                      <span className="text-sm text-white/70">{item}</span>
                     </div>
                   ))}
-                </div>
-
-                <div className="mt-4 flex-1 rounded-2xl border border-white/10 bg-white/5 p-3">
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white/80">
-                      实时监测
-                    </span>
-
-                    <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[11px] font-semibold text-emerald-300">
-                      LIVE
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {monitorItems.map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-3 py-2"
-                      >
-                        <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                        <span className="text-sm text-white/70">{item}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid min-h-0 grid-rows-[0.9fr_0.75fr] gap-5 xl:col-span-8">
-              <div className="grid min-h-0 grid-cols-1 gap-5 lg:grid-cols-2">
-                <div className="min-h-0 rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="grid grid-cols-1 gap-5">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <div className="rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
                   <div className="mb-5 flex items-center gap-3">
                     <ShieldCheck className="h-6 w-6 text-green-500" />
                     <h3 className="text-[22px] font-bold text-gray-950">
@@ -155,7 +151,7 @@ export default function ResourceStatus() {
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {health.map((item) => (
                       <div
                         key={item.name}
@@ -176,7 +172,7 @@ export default function ResourceStatus() {
                   </div>
                 </div>
 
-                <div className="min-h-0 rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
+                <div className="rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
                   <div className="mb-5 flex items-center gap-3">
                     <RefreshCw className="h-6 w-6 text-[#C41E3A]" />
                     <h3 className="text-[22px] font-bold text-gray-950">
@@ -208,7 +204,7 @@ export default function ResourceStatus() {
                 </div>
               </div>
 
-              <div className="min-h-0 overflow-hidden rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
+              <div className="rounded-[24px] border border-gray-100 bg-white p-5 shadow-sm">
                 <div className="mb-5 flex items-center gap-3">
                   <Zap className="h-6 w-6 text-[#D4A574]" />
                   <h3 className="text-[22px] font-bold text-gray-950">
@@ -238,7 +234,7 @@ export default function ResourceStatus() {
                   ))}
                 </div>
 
-                <div className="mt-5 grid grid-cols-3 gap-4">
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="rounded-2xl bg-gray-50 p-4">
                     <BarChart3 className="mb-2 h-5 w-5 text-[#C41E3A]" />
                     <p className="text-sm text-gray-500">调用增长</p>

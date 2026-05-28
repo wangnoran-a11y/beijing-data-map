@@ -77,9 +77,9 @@ export default function ResourceCards() {
   const FeaturedIcon = featured.icon;
 
   return (
-    <section className="bg-white px-5 py-5 sm:px-8 lg:px-10 xl:px-14 2xl:px-20">
-      <div className="mx-auto w-full max-w-[1720px]">
-        <div className="mb-4 flex items-start justify-between">
+    <section className="bg-white px-5 py-10 sm:px-8 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="mx-auto w-full max-w-[1440px]">
+        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-5">
             <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C41E3A]/10">
               <Database className="h-6 w-6 text-[#C41E3A]" />
@@ -97,18 +97,20 @@ export default function ResourceCards() {
 
           <Link
             href="/data-catalog"
-            className="mt-2 flex items-center gap-2 rounded-full bg-[#C41E3A] px-5 py-2 text-sm font-bold text-white shadow-lg shadow-red-100 transition-all hover:bg-[#A91830]"
+            className="w-fit rounded-full bg-[#C41E3A] px-5 py-2 text-sm font-bold text-white shadow-lg shadow-red-100 transition-all hover:bg-[#A91830]"
           >
-            资源申请入口
-            <ArrowRight className="h-4 w-4" />
+            <span className="inline-flex items-center gap-2">
+              资源申请入口
+              <ArrowRight className="h-4 w-4" />
+            </span>
           </Link>
         </div>
 
         <div className="rounded-[32px] border border-gray-100 bg-gradient-to-br from-gray-50 via-white to-red-50/30 p-4 shadow-sm sm:p-5">
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.15fr)]">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[0.95fr_1.45fr]">
             <Link
               href="/data-catalog"
-              className="group relative flex min-h-[430px] flex-col overflow-hidden rounded-[28px] bg-[#111827] p-5 text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl xl:min-h-[455px]"
+              className="group relative flex min-h-[390px] flex-col overflow-hidden rounded-[28px] bg-[#111827] p-5 text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-[#C41E3A]/25 blur-3xl" />
               <div className="absolute bottom-0 left-0 h-36 w-36 rounded-full bg-[#D4A574]/20 blur-3xl" />
@@ -129,7 +131,7 @@ export default function ResourceCards() {
                   {featured.tag}
                 </span>
 
-                <h3 className="mt-4 text-[27px] font-black leading-tight">
+                <h3 className="mt-4 text-[26px] font-black leading-tight">
                   {featured.title}
                 </h3>
 
@@ -164,13 +166,13 @@ export default function ResourceCards() {
                 </div>
               </div>
 
-              <div className="relative mt-auto flex items-center justify-between border-t border-white/10 pt-5">
-                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300">
+              <div className="relative mt-auto flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300">
                   <Unlock className="h-3.5 w-3.5" />
                   {featured.status}
                 </span>
 
-                <span className="flex items-center gap-2 rounded-full bg-[#C41E3A] px-4 py-2 text-sm font-bold text-white transition-all group-hover:bg-[#A91830]">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#C41E3A] px-4 py-2 text-sm font-bold text-white transition-all group-hover:bg-[#A91830]">
                   进入资源目录
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -185,7 +187,7 @@ export default function ResourceCards() {
                   <Link
                     href="/data-catalog"
                     key={item.title}
-                    className="group flex min-h-[430px] flex-col rounded-[26px] border border-gray-100 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-100 hover:shadow-xl xl:min-h-[455px]"
+                    className="group flex min-h-[390px] flex-col rounded-[26px] border border-gray-100 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-100 hover:shadow-xl"
                   >
                     <div className="mb-5 flex items-start justify-between">
                       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C41E3A]/10">
