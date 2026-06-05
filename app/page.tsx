@@ -1,3 +1,4 @@
+import IndustryDetail from "@/components/IndustryDetail";
 import LoginGate from "@/components/LoginGate";
 import Header from "@/components/Header";
 import HeroSearch from "@/components/HeroSearch";
@@ -13,11 +14,15 @@ export default function Home() {
       <main className="min-h-screen bg-[#050816] text-white">
         <Header />
         <HeroSearch />
+
+        <IndustryDetail />
+
         <SourceNav />
         <IndustryZone />
-        <ResourceStatus />
         <HotResources />
-        <ResourceCards />
+        <ResourceStatus />
+        
+        
       </main>
     </LoginGate>
   );

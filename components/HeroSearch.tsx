@@ -2,9 +2,10 @@
 
 import { Search, Database, Globe, TrendingUp } from "lucide-react";
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function HeroSearch() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
   const quickTags = [
@@ -20,6 +21,14 @@ export default function HeroSearch() {
     { icon: Globe, label: "数据产品", value: "3,420+" },
     { icon: TrendingUp, label: "活跃度", value: "580万+" },
   ];
+
+  const handleSearch = (keyword?: string) => {
+    const finalKeyword = (keyword ?? searchQuery).trim();
+
+    if (!finalKeyword) return;
+
+    router.push(`/search?q=${encodeURIComponent(finalKeyword)}`);
+  };
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white pt-16">
@@ -70,19 +79,27 @@ export default function HeroSearch() {
         <div className="relative mx-auto mb-6 max-w-4xl">
           <div className="relative flex items-center overflow-hidden rounded-2xl border border-gray-200 bg-white/95 shadow-2xl shadow-red-100/40 animate-pulse-glow">
             <Search className="absolute left-5 h-5 w-5 text-gray-400" />
+
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
               placeholder="搜索数据资源、数据产品、产业应用场景..."
               className="w-full bg-transparent py-5 pl-14 pr-32 text-base text-gray-900 placeholder-gray-400 focus:outline-none"
             />
-            <Link
-              href="/data-catalog"
+
+            <button
+              type="button"
+              onClick={() => handleSearch()}
               className="absolute right-2 rounded-full bg-gradient-to-r from-[#B4232A] to-[#D4383F] px-6 py-2.5 font-medium text-white transition-all hover:shadow-lg hover:shadow-red-500/25"
             >
               搜索
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -92,7 +109,9 @@ export default function HeroSearch() {
           {quickTags.map((tag) => (
             <button
               key={tag}
-              className="rounded-full border border-white/30 bg-white/90 px-3 py-1 text-sm text-gray-700 shadow-sm hover:border-[#B4232A]/40 hover:bg-[#FFF1F1] hover:text-[#B4232A]"
+              type="button"
+              onClick={() => handleSearch(tag)}
+              className="rounded-full border border-white/30 bg-white/90 px-3 py-1 text-sm text-gray-700 shadow-sm transition hover:border-[#B4232A]/40 hover:bg-[#FFF1F1] hover:text-[#B4232A]"
             >
               {tag}
             </button>

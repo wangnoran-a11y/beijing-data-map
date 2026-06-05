@@ -4,8 +4,10 @@ import Link from "next/link";
 import {
   Database,
   FileText,
-  Globe,
-  CloudSun,
+  HeartPulse,
+  Car,
+  Users,
+  Pill,
   ArrowRight,
   Lock,
   Unlock,
@@ -14,60 +16,60 @@ import {
 
 const cards = [
   {
-    icon: Globe,
-    title: "城市道路实时路况",
-    source: "北京市交通委",
-    format: "API",
-    size: "实时流",
-    fields: 28,
-    records: "1.2亿+",
-    status: "开放",
-    tag: "交通出行",
+    icon: Car,
+    title: "车辆维修电子健康档案",
+    source: "交通运输部汽车维修电子档案系统",
+    format: "API/报告",
+    size: "59.1亿条",
+    fields: 58,
+    records: "59.1亿+",
+    status: "授权",
+    tag: "交通行业",
     hot: 98,
-    open: true,
-    desc: "覆盖重点道路车流量、车速、拥堵状态等实时数据，支撑交通监测与出行服务。",
+    open: false,
+    desc: "覆盖维修基础信息、维修配件、维修工时等数据，支撑保险风控、二手车评估和汽车金融服务。",
   },
   {
-    icon: FileText,
-    title: "企业工商注册信息",
-    source: "北京市市场监管局",
-    format: "CSV/JSON",
-    size: "4.8GB",
-    fields: 42,
-    records: "280万+",
+    icon: HeartPulse,
+    title: "医疗机构基础信息库",
+    source: "医疗健康数据资源",
+    format: "表/接口",
+    size: "待统计",
+    fields: "待统计",
+    records: "待统计",
     status: "授权",
-    tag: "金融服务",
+    tag: "医疗行业",
     hot: 95,
     open: false,
-    desc: "提供企业登记、经营状态、行业分类等信息，支撑企业画像、授信辅助与产业分析。",
+    desc: "汇聚医疗机构、科室、床位、机构等级、服务能力等基础信息，支撑医疗机构画像和资源配置分析。",
   },
   {
-    icon: CloudSun,
-    title: "气象观测站历史数据",
-    source: "北京市气象局",
-    format: "NetCDF",
-    size: "12.6GB",
-    fields: 56,
-    records: "8600万+",
-    status: "开放",
-    tag: "农业农村",
+    icon: Users,
+    title: "养老机构数据资源",
+    source: "民政养老数据资源",
+    format: "表/接口",
+    size: "178项字段",
+    fields: 178,
+    records: "月度更新",
+    status: "授权",
+    tag: "民政行业",
+    hot: 92,
+    open: false,
+    desc: "覆盖养老机构、从业人员、入住老人、床位、收费及运营状态等数据，支撑养老机构画像和养老金融服务。",
+  },
+  {
+    icon: Pill,
+    title: "药品数据资源",
+    source: "医疗药品数据资源",
+    format: "表/接口",
+    size: "待统计",
+    fields: "待统计",
+    records: "待统计",
+    status: "授权",
+    tag: "医疗行业",
     hot: 88,
-    open: true,
-    desc: "沉淀气温、降水、风速、湿度等历史观测数据，服务农业生产、城市运行与风险研判。",
-  },
-  {
-    icon: Globe,
-    title: "公共WiFi热点分布",
-    source: "北京市经信局",
-    format: "GeoJSON",
-    size: "156MB",
-    fields: 15,
-    records: "4.2万+",
-    status: "开放",
-    tag: "社会民生",
-    hot: 82,
-    open: true,
-    desc: "展示公共网络服务点位、空间分布及覆盖情况，支撑公共服务可达性分析。",
+    open: false,
+    desc: "覆盖药品名称、批准文号、药品分类、生产企业、规格价格等信息，支撑药品监管和流通分析。",
   },
 ].sort((a, b) => b.hot - a.hot);
 
@@ -87,10 +89,10 @@ export default function ResourceCards() {
 
             <div>
               <h2 className="text-[28px] font-bold tracking-tight text-gray-950 lg:text-[30px]">
-                资源卡片
+                重点资源卡片
               </h2>
               <p className="mt-1 text-[15px] text-gray-500 lg:text-[16px]">
-                精选高价值数据资源，支撑数据产品开发与产业场景应用
+                围绕交通、医疗、民政重点数据资源，支撑数据产品开发与产业场景应用
               </p>
             </div>
           </div>
@@ -167,8 +169,8 @@ export default function ResourceCards() {
               </div>
 
               <div className="relative mt-auto flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-300">
-                  <Unlock className="h-3.5 w-3.5" />
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#D4A574]/15 px-3 py-1 text-xs font-bold text-[#D4A574]">
+                  <Lock className="h-3.5 w-3.5" />
                   {featured.status}
                 </span>
 
@@ -226,7 +228,7 @@ export default function ResourceCards() {
                       </div>
 
                       <div className="rounded-2xl bg-gray-50 p-3">
-                        <p className="text-xs text-gray-400">大小</p>
+                        <p className="text-xs text-gray-400">规模</p>
                         <p className="mt-1 font-bold text-gray-900">
                           {item.size}
                         </p>
@@ -240,7 +242,7 @@ export default function ResourceCards() {
                       </div>
 
                       <div className="rounded-2xl bg-gray-50 p-3">
-                        <p className="text-xs text-gray-400">记录</p>
+                        <p className="text-xs text-gray-400">更新</p>
                         <p className="mt-1 font-bold text-gray-900">
                           {item.records}
                         </p>
@@ -248,13 +250,7 @@ export default function ResourceCards() {
                     </div>
 
                     <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span
-                        className={`rounded-md px-2 py-1 text-xs font-bold ${
-                          item.open
-                            ? "bg-green-50 text-green-600"
-                            : "bg-[#D4A574]/10 text-[#B98245]"
-                        }`}
-                      >
+                      <span className="rounded-md bg-[#D4A574]/10 px-2 py-1 text-xs font-bold text-[#B98245]">
                         {item.status}
                       </span>
 
