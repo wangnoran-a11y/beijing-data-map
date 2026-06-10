@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Database } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { name: "首页", href: "/" },
@@ -10,16 +13,31 @@ const navItems = [
 ];
 
 export default function Header() {
-  return (
-    <header className="fixed top-0 left-0 z-50 w-full border-b border-white/20 bg-white/78 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
-      <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-10">
-        <Link href="/" className="flex items-center gap-3">
-          <Database className="h-7 w-7 text-[#B4232A]" />
+  const [isLogin, setIsLogin] = useState(false);
+  const [username, setUsername] = useState("用户");
 
+  useEffect(() => {
+    const loginStatus = localStorage.getItem("isLogin");
+    const user = localStorage.getItem("username");
+
+    setIsLogin(loginStatus === "true");
+    setUsername(user || "王楠");
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("username");
+    window.location.href = "/";
+  };
+
+  return (
+    <header className="fixed left-0 top-0 z-50 w-full border-b border-white/20 bg-white/80 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+      <div className="mx-auto flex h-[74px] max-w-7xl items-center justify-between px-10">
+        <Link href="/" className="group flex items-center gap-3 transition-all">
+          <Database className="h-7 w-7 text-[#B4232A]" />
           <span className="text-[28px] font-bold tracking-tight text-[#1F2937]">
             北京数据集团
           </span>
-
           <span className="text-sm text-[#94A3B8]">数据地图</span>
         </Link>
 
@@ -28,16 +46,42 @@ export default function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-[15px] font-semibold tracking-wide text-[#334155] transition-all duration-200 hover:-translate-y-[1px] hover:text-[#B4232A]"
+              className="text-[15px] font-semibold tracking-wide text-[#334155] transition hover:text-[#B4232A]"
             >
               {item.name}
             </Link>
           ))}
         </nav>
 
-        <button className="rounded-full bg-gradient-to-r from-[#B4232A] to-[#D4383F] px-7 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-200/40 transition-all hover:scale-[1.03] hover:shadow-red-300/50">
-          登录 / 注册
-        </button>
+        {isLogin ? (
+          <div className="flex items-center gap-4">
+            <Link href="/profile" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-[#B4232A] to-[#D4383F] text-sm font-bold text-white">
+                王
+              </div>
+              <div className="leading-tight">
+                <div className="text-sm font-bold text-slate-800">
+                  {username}
+                </div>
+                <div className="text-xs text-slate-400">企业用户</div>
+              </div>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:border-red-300 hover:text-red-600"
+            >
+              退出
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="rounded-full bg-gradient-to-r from-[#B4232A] to-[#D4383F] px-7 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-200/40 transition hover:scale-105"
+          >
+            登录 / 注册
+          </Link>
+        )}
       </div>
     </header>
   );
