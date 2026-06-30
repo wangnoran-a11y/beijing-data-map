@@ -13,44 +13,55 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const sources = [
-  "市民政局",
-  "市卫健委",
-  "市医保局",
-  "市交通委",
+const beijingSources = [
   "市公安局",
+  "市卫健委",
+  "市民政局",
+  "市医保局",
   "市税务局",
   "市教委",
   "市生态环境局",
+  "市规划自然资源委",
+];
+
+const ministrySources = [
+  "交通运输部",
+  "国家医保局",
+  "国家市场监督管理总局",
+  "国家知识产权局",
+  "国家统计局",
+  "中国气象局",
+  "住房城乡建设部",
+  "应急管理部",
 ];
 
 const projects = [
   {
     title: "汽车电子健康档案",
     tag: "交通运输部",
-    desc: "覆盖车辆维修基础信息、配件信息、工时信息，支撑保险风控、二手车交易、汽车金融等场景。",
-    stats: ["3张核心表", "58个字段", "18个产品"],
+    desc: "首批产品发布，持续推进全国数据验证与产品能力扩展。",
+    stats: ["4项已发布", "18项规划"],
     href: "/data-catalog/transport",
   },
   {
     title: "公共数据授权运营",
     tag: "北京市",
-    desc: "第一批授权运营资源覆盖8个重点领域、19个应用场景，形成资源目录与产品服务清单。",
-    stats: ["8个领域", "19个场景", "2类服务方向"],
+    desc: "围绕第一批公共数据资源，推进场景建设和产品服务清单完善。",
+    stats: ["8个领域", "19个场景"],
     href: "/authorized-resources",
   },
   {
     title: "养老金融服务",
     tag: "民政数据",
-    desc: "围绕养老机构基础信息、运营能力、补贴信息和风险情况，支撑银行授信和机构评级。",
-    stats: ["养老机构", "风险评级", "授信调查"],
+    desc: "支撑养老机构评级、授信调查和养老金融场景应用。",
+    stats: ["机构画像", "风险评级"],
     href: "/data-catalog/civil",
   },
   {
     title: "企业授信风控",
     tag: "金融服务",
-    desc: "整合企业登记、税务申报、发票交易、创投和年报数据，支撑贷前准入和风险预警。",
-    stats: ["企业画像", "发票核验", "授信评估"],
+    desc: "整合企业经营、税务、发票和年报数据，支撑贷前风控。",
+    stats: ["企业画像", "授信评估"],
     href: "/data-catalog/finance",
   },
 ];
@@ -192,7 +203,7 @@ export default function Home() {
                 数据资源来源
               </h2>
               <p className="mt-3 text-slate-500">
-                汇聚市级部门、国家部委及重点行业数据资源，形成统一资源视图。
+                汇聚北京市公共数据资源、国家部委数据资源及重点行业数据资源，形成统一资源视图。
               </p>
             </div>
 
@@ -205,67 +216,62 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-4">
-            {sources.map((item) => (
-              <div key={item} className="rounded-3xl bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50">
-                  <Building2 className="h-5 w-5 text-[#C41E3A]" />
-                </div>
-                <div className="font-black text-slate-900">{item}</div>
-                <p className="mt-2 text-sm text-slate-500">
-                  公共数据资源提供部门
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-10 py-10">
-          <div className="mb-8">
-            <h2 className="text-3xl font-black text-slate-900">
-              重点项目建设
-            </h2>
-            <p className="mt-3 text-slate-500">
-              围绕授权运营、部委数据合作和重点场景需求，推进数据资源产品化。
-            </p>
-          </div>
-
           <div className="grid gap-6 md:grid-cols-2">
-            {projects.map((item) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="mb-4 inline-flex rounded-full bg-red-50 px-4 py-2 text-xs font-bold text-[#C41E3A]">
-                  {item.tag}
+            <div className="rounded-[28px] bg-white p-7 shadow-sm">
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+                  <Building2 className="h-6 w-6 text-[#C41E3A]" />
                 </div>
 
-                <h3 className="text-2xl font-black text-slate-900">
-                  {item.title}
-                </h3>
+                <div>
+                  <h3 className="text-xl font-black text-slate-900">
+                    北京市公共数据
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    已接入重点市级部门数据资源
+                  </p>
+                </div>
+              </div>
 
-                <p className="mt-3 min-h-[72px] text-sm leading-6 text-slate-500">
-                  {item.desc}
-                </p>
+              <div className="grid grid-cols-2 gap-3">
+                {beijingSources.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {item.stats.map((stat) => (
-                    <span
-                      key={stat}
-                      className="rounded-full bg-slate-50 px-4 py-2 text-xs font-bold text-slate-600"
-                    >
-                      {stat}
-                    </span>
-                  ))}
+            <div className="rounded-[28px] bg-white p-7 shadow-sm">
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+                  <Database className="h-6 w-6 text-[#C41E3A]" />
                 </div>
 
-                <div className="mt-6 inline-flex items-center gap-2 font-bold text-[#C41E3A]">
-                  查看项目
-                  <ArrowRight className="h-4 w-4" />
+                <div>
+                  <h3 className="text-xl font-black text-slate-900">
+                    国家部委数据
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    已接入国家部委重点数据资源
+                  </p>
                 </div>
-              </Link>
-            ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {ministrySources.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -354,7 +360,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-10 py-10 pb-20">
+        <section className="mx-auto max-w-7xl px-10 py-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-3xl font-black text-slate-900">
@@ -386,6 +392,57 @@ export default function Home() {
                 </div>
 
                 <div className="font-black text-slate-900">{item}</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-10 pt-6 pb-20">
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900">
+                重点项目
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                轻量展示当前重点推进的数据资源建设、产品开发和场景落地项目。
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-4">
+            {projects.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              >
+                <div className="mb-3 inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-[#C41E3A]">
+                  {item.tag}
+                </div>
+
+                <h3 className="text-base font-black text-slate-900">
+                  {item.title}
+                </h3>
+
+                <p className="mt-2 min-h-[48px] text-sm leading-6 text-slate-500">
+                  {item.desc}
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.stats.map((stat) => (
+                    <span
+                      key={stat}
+                      className="rounded-full bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600"
+                    >
+                      {stat}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#C41E3A]">
+                  查看
+                  <ArrowRight className="h-4 w-4" />
+                </div>
               </Link>
             ))}
           </div>
