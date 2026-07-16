@@ -1,195 +1,587 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
-  Database,
   ArrowRight,
-  Table2,
-  Boxes,
+  Building2,
+  Database,
   FileText,
+  Landmark,
+  Layers3,
+  Search,
   ShieldCheck,
 } from "lucide-react";
-import { dataCatalog } from "@/data/dataMapCatalog";
+import {
+  authorizedResourceDomains,
+  authorizedResourceSummary,
+} from "@/data/authorizedResources";
+
+const PUBLIC_PRODUCT_SERVICE_COUNT = 58;
+const MINISTRY_PRODUCT_COUNT = 9;
+
+const ministryCatalogs = [
+  {
+    id: "transport-ministry",
+    name: "交通运输部",
+    shortName: "交通",
+    description:
+      "汽车维修电子健康档案，覆盖维修基础信息、维修配件信息、维修项目工时信息等。",
+    tags: ["汽车维修", "维修配件", "维修工时"],
+    stats: ["3张核心表", "58个字段", "9个产品"],
+    status: "已接入",
+    href: "/data-catalog/transport",
+  },
+  {
+    id: "civil-ministry",
+    name: "民政部",
+    shortName: "民政",
+    description:
+      "覆盖养老机构、社会组织、婚姻登记、社会救助等民政领域数据资源。",
+    tags: ["养老服务", "社会组织", "民政治理"],
+    stats: ["目录建设中"],
+    status: "持续建设",
+    href: "/data-catalog/civil",
+  },
+  {
+    id: "health-ministry",
+    name: "国家卫生健康委",
+    shortName: "卫健",
+    description:
+      "覆盖医疗健康、居民健康管理、诊疗服务、疾病防控等领域数据资源。",
+    tags: ["居民健康", "诊疗服务", "疾病防控"],
+    stats: ["目录建设中"],
+    status: "持续建设",
+    href: "/authorized-resources/medical-health",
+  },
+  {
+    id: "medical-insurance-ministry",
+    name: "国家医疗保障局",
+    shortName: "医保",
+    description:
+      "覆盖医保目录、医保结算、医保费用、药品耗材及医保追溯等数据资源。",
+    tags: ["医保目录", "医保结算", "药品耗材"],
+    stats: ["目录建设中"],
+    status: "持续建设",
+    href: "/authorized-resources/medical-health",
+  },
+  {
+    id: "public-security-ministry",
+    name: "公安部",
+    shortName: "公安",
+    description:
+      "覆盖机动车登记、驾驶证、交通违法、车辆过户和车辆抵押等公安交管数据资源。",
+    tags: ["机动车", "交通违法", "车辆登记"],
+    stats: ["目录建设中"],
+    status: "持续建设",
+    href: "/authorized-resources",
+  },
+  {
+    id: "education-ministry",
+    name: "教育部",
+    shortName: "教育",
+    description:
+      "覆盖基础教育课程、课标、考点、知识点及教育行业大模型基础数据资源。",
+    tags: ["教育教学", "课标资源", "教育大模型"],
+    stats: ["目录建设中"],
+    status: "持续建设",
+    href: "/data-catalog/education",
+  },
+];
 
 export default function DataCatalogPage() {
-  const totalTables = dataCatalog.reduce(
-    (sum, item) => sum + item.stats.tables,
-    0
-  );
+  const [keyword, setKeyword] = useState("");
+  const [selectedDomain, setSelectedDomain] = useState("all");
 
-  const totalFields = dataCatalog.reduce(
-    (sum, item) => sum + item.stats.fields,
-    0
-  );
+  const publicCatalogItems = useMemo(() => {
+    return authorizedResourceDomains.flatMap((domain) =>
+      domain.resources.map((resource) => ({
+        domainId: domain.id,
+        domainName: domain.name,
+        domainShortName: domain.shortName,
+        resourceId: resource.id,
+        resourceName: resource.name,
+        description: resource.description,
+        examples: resource.examples,
+      }))
+    );
+  }, []);
 
-  const totalProducts = dataCatalog.reduce(
-    (sum, item) => sum + item.products.length,
-    0
-  );
+  const totalPublicDataItems = useMemo(() => {
+    return publicCatalogItems.reduce(
+      (sum, item) => sum + item.examples.length,
+      0
+    );
+  }, [publicCatalogItems]);
+
+  const filteredPublicItems = useMemo(() => {
+    const normalizedKeyword = keyword.trim().toLowerCase();
+
+    return publicCatalogItems.filter((item) => {
+      const matchesDomain =
+        selectedDomain === "all" || item.domainId === selectedDomain;
+
+      const searchableText = [
+        item.domainName,
+        item.resourceName,
+        item.description,
+        ...item.examples,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const matchesKeyword =
+        normalizedKeyword === "" ||
+        searchableText.includes(normalizedKeyword);
+
+      return matchesDomain && matchesKeyword;
+    });
+  }, [keyword, publicCatalogItems, selectedDomain]);
+
+  const currentDomainName =
+    selectedDomain === "all"
+      ? "全部领域"
+      : authorizedResourceDomains.find(
+          (domain) => domain.id === selectedDomain
+        )?.name ?? "全部领域";
+
+  const totalSourceTypes = 2;
+  const totalCatalogUnits =
+    authorizedResourceSummary.domainCount + ministryCatalogs.length;
+  const totalProductsAndServices =
+    PUBLIC_PRODUCT_SERVICE_COUNT + MINISTRY_PRODUCT_COUNT;
 
   return (
-    <main className="min-h-screen bg-[#F7F8FA] pt-28 pb-16">
-      <div className="mx-auto max-w-7xl px-10">
-        <div className="mb-10">
-          <h1 className="text-[42px] font-black text-slate-900">
+    <main className="min-h-screen bg-[#F7F8FA] pb-16 pt-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* 页面标题 */}
+        <section className="mb-8">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
+            <Database className="h-4 w-4" />
+            统一数据目录
+          </div>
+
+          <h1 className="text-[42px] font-black tracking-tight text-slate-900">
             数据目录
           </h1>
 
-          <p className="mt-3 text-slate-500">
-            汇聚北京市及国家部委重点数据资源目录，展示核心数据表、字段清单及数据产品能力。
+          <p className="mt-3 max-w-4xl leading-7 text-slate-500">
+            汇聚北京市公共数据授权目录和国家部委行业数据目录，
+            分区展示数据资源、数据表、字段清单及数据产品能力。
           </p>
-        </div>
+        </section>
 
-        <Link
-          href="/authorized-resources"
-          className="mb-10 block rounded-3xl border border-red-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-        >
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        {/* 整体统计：公共数据 + 国家部委 */}
+        <section className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-xl font-black text-slate-900">
+              数据目录整体概览
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              以下统计涵盖北京市公共数据授权目录和已纳入展示的国家部委数据目录。
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={Database}
+              label="数据来源"
+              value={totalSourceTypes}
+              unit="类"
+              note="北京市公共数据、国家部委数据"
+            />
+
+            <StatCard
+              icon={Landmark}
+              label="目录单元"
+              value={totalCatalogUnits}
+              unit="个"
+              note={`${authorizedResourceSummary.domainCount}个公共数据领域 + ${ministryCatalogs.length}个部委来源`}
+            />
+
+            <StatCard
+              icon={Layers3}
+              label="公共资源分类"
+              value={authorizedResourceSummary.resourceCount}
+              unit="类"
+              note={`包含${totalPublicDataItems}项具体数据内容`}
+            />
+
+            <StatCard
+              icon={ShieldCheck}
+              label="产品和服务"
+              value={totalProductsAndServices}
+              unit="项"
+              note={`${PUBLIC_PRODUCT_SERVICE_COUNT}项公共数据产品服务 + ${MINISTRY_PRODUCT_COUNT}项部委产品`}
+            />
+          </div>
+        </section>
+
+        {/* 北京市公共数据目录 */}
+        <section className="mb-14">
+          <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
                 <ShieldCheck className="h-4 w-4" />
                 公共数据授权运营
               </div>
 
-              <h2 className="text-2xl font-black text-slate-900">
-                第一批公共数据资源与产品服务清单
+              <h2 className="text-3xl font-black text-slate-900">
+                北京市公共数据授权目录
               </h2>
 
-              <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-500">
-                覆盖8个重点领域、19个应用场景，展示拟纳入授权运营的数据资源范围、数据提供部门及公共数据产品服务清单。
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-500">
+                覆盖{authorizedResourceSummary.domainCount}个重点领域、
+                {authorizedResourceSummary.resourceCount}类公共数据资源及
+                {PUBLIC_PRODUCT_SERVICE_COUNT}项公共数据产品和服务。
               </p>
             </div>
 
-            <div className="inline-flex w-fit items-center gap-2 rounded-full bg-[#C41E3A] px-5 py-3 text-sm font-bold text-white">
-              查看清单
-              <ArrowRight className="h-4 w-4" />
-            </div>
-          </div>
-        </Link>
-
-        <div className="mb-10 grid gap-6 md:grid-cols-4">
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3 text-sm text-slate-500">
-              <Database className="h-5 w-5 text-[#C41E3A]" />
-              数据领域
-            </div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {dataCatalog.length}
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3 text-sm text-slate-500">
-              <Table2 className="h-5 w-5 text-[#C41E3A]" />
-              数据表
-            </div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {totalTables}
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3 text-sm text-slate-500">
-              <Boxes className="h-5 w-5 text-[#C41E3A]" />
-              字段总量
-            </div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {totalFields}
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3 text-sm text-slate-500">
-              <FileText className="h-5 w-5 text-[#C41E3A]" />
-              数据产品
-            </div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {totalProducts}
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="text-2xl font-black text-slate-900">
-            重点领域数据目录
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            点击进入各领域详情，查看数据表、字段全表及数据产品清单。
-          </p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-3">
-          {dataCatalog.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            <Link
+              href="/authorized-resources"
+              className="inline-flex w-fit items-center gap-2 rounded-full bg-[#C41E3A] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#A81831]"
             >
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C41E3A]">
-                  <Database className="h-6 w-6 text-white" />
-                </div>
+              查看授权资源
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
 
-                <div>
-                  <h2 className="font-black text-slate-900">
-                    {item.name}
-                  </h2>
+          {/* 搜索及领域筛选 */}
+          <div className="mb-6 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-4">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
-                  <p className="text-xs text-slate-500">
-                    {item.source}
-                  </p>
-                </div>
+                <input
+                  value={keyword}
+                  onChange={(event) => setKeyword(event.target.value)}
+                  placeholder="搜索公共数据资源分类、数据内容或关键词"
+                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-12 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-red-200 focus:bg-white focus:ring-4 focus:ring-red-50"
+                />
               </div>
 
-              <p className="mb-5 text-sm leading-6 text-slate-600">
-                {item.summary}
-              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedDomain("all")}
+                  className={[
+                    "rounded-full px-4 py-2 text-sm font-bold transition",
+                    selectedDomain === "all"
+                      ? "bg-[#C41E3A] text-white"
+                      : "bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-[#C41E3A]",
+                  ].join(" ")}
+                >
+                  全部领域
+                </button>
 
-              <div className="mb-5 grid grid-cols-3 gap-3">
-                <div className="rounded-xl bg-slate-50 px-3 py-4 text-center">
-                  <div className="text-xl font-black text-slate-900">
-                    {item.stats.tables}
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">数据表</div>
-                </div>
-
-                <div className="rounded-xl bg-slate-50 px-3 py-4 text-center">
-                  <div className="text-xl font-black text-slate-900">
-                    {item.stats.fields}
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">字段</div>
-                </div>
-
-                <div className="rounded-xl bg-slate-50 px-3 py-4 text-center">
-                  <div className="text-xl font-black text-slate-900">
-                    {item.products.length}
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">产品</div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {item.tables.slice(0, 3).map((table) => (
-                  <div
-                    key={table.tableName}
-                    className="rounded-xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700"
+                {authorizedResourceDomains.map((domain) => (
+                  <button
+                    key={domain.id}
+                    type="button"
+                    onClick={() => setSelectedDomain(domain.id)}
+                    className={[
+                      "rounded-full px-4 py-2 text-sm font-bold transition",
+                      selectedDomain === domain.id
+                        ? "bg-[#C41E3A] text-white"
+                        : "bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-[#C41E3A]",
+                    ].join(" ")}
                   >
-                    {table.tableCnName}
-                    <span className="ml-2 text-xs text-slate-400">
-                      {table.fieldCount}个字段
+                    {domain.name}
+                    <span className="ml-1.5 opacity-70">
+                      {domain.resources.length}
                     </span>
-                  </div>
+                  </button>
                 ))}
               </div>
-
-              <Link
-                href={`/data-catalog/${item.id}`}
-                className="mt-6 inline-flex items-center gap-2 font-bold text-[#C41E3A]"
-              >
-                查看字段全表与产品清单
-                <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
-          ))}
-        </div>
+          </div>
+
+          <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div>
+              <h3 className="text-2xl font-black text-slate-900">
+                公共数据资源目录清单
+              </h3>
+
+              <p className="mt-2 text-sm text-slate-500">
+                当前展示：
+                <span className="font-bold text-slate-700">
+                  {currentDomainName}
+                </span>
+                ，共
+                <span className="mx-1 font-bold text-[#C41E3A]">
+                  {filteredPublicItems.length}
+                </span>
+                类资源。
+              </p>
+            </div>
+
+            {(keyword || selectedDomain !== "all") && (
+              <button
+                type="button"
+                onClick={() => {
+                  setKeyword("");
+                  setSelectedDomain("all");
+                }}
+                className="w-fit text-sm font-bold text-[#C41E3A]"
+              >
+                清空筛选
+              </button>
+            )}
+          </div>
+
+          {/* 桌面端公共数据表格 */}
+          <div className="hidden overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm lg:block">
+            <div className="grid grid-cols-[72px_130px_240px_minmax(0,1fr)_90px_110px] items-center border-b border-slate-100 bg-slate-50 px-5 py-4 text-xs font-bold text-slate-500">
+              <div>序号</div>
+              <div>授权领域</div>
+              <div>资源分类</div>
+              <div>数据资源内容</div>
+              <div className="text-center">内容数量</div>
+              <div className="text-right">操作</div>
+            </div>
+
+            {filteredPublicItems.length > 0 ? (
+              <div>
+                {filteredPublicItems.map((item, index) => (
+                  <Link
+                    key={`${item.domainId}-${item.resourceId}`}
+                    href={`/authorized-resources/${item.domainId}/${item.resourceId}`}
+                    className="group grid grid-cols-[72px_130px_240px_minmax(0,1fr)_90px_110px] items-center border-b border-slate-100 px-5 py-5 transition last:border-b-0 hover:bg-red-50/40"
+                  >
+                    <div className="text-sm font-bold text-slate-400">
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
+
+                    <div>
+                      <span className="inline-flex rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
+                        {item.domainName}
+                      </span>
+                    </div>
+
+                    <div className="pr-6 text-sm font-bold text-slate-800 transition group-hover:text-[#C41E3A]">
+                      {item.resourceName}
+                    </div>
+
+                    <div className="min-w-0 pr-8">
+                      <div className="line-clamp-1 text-sm text-slate-600">
+                        {item.examples.join("、")}
+                      </div>
+
+                      <div className="mt-1 line-clamp-1 text-xs text-slate-400">
+                        {item.description}
+                      </div>
+                    </div>
+
+                    <div className="text-center">
+                      <span className="inline-flex min-w-[52px] justify-center rounded-lg bg-slate-50 px-2.5 py-1.5 text-sm font-bold text-slate-700">
+                        {item.examples.length}项
+                      </span>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <span className="inline-flex items-center gap-1 text-sm font-bold text-[#C41E3A]">
+                        查看详情
+                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <EmptyState />
+            )}
+          </div>
+
+          {/* 移动端公共数据列表 */}
+          <div className="space-y-4 lg:hidden">
+            {filteredPublicItems.length > 0 ? (
+              filteredPublicItems.map((item, index) => (
+                <Link
+                  key={`${item.domainId}-${item.resourceId}`}
+                  href={`/authorized-resources/${item.domainId}/${item.resourceId}`}
+                  className="group block rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-red-200"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-black text-[#C41E3A]">
+                        {String(index + 1).padStart(2, "0")}
+                      </div>
+
+                      <div className="min-w-0">
+                        <span className="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-[#C41E3A]">
+                          {item.domainName}
+                        </span>
+
+                        <h3 className="mt-2 font-black text-slate-900">
+                          {item.resourceName}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-[#C41E3A]" />
+                  </div>
+
+                  <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-500">
+                    {item.examples.join("、")}
+                  </p>
+
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs">
+                    <span className="text-slate-400">数据内容</span>
+                    <span className="font-bold text-slate-700">
+                      {item.examples.length}项
+                    </span>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-slate-100 bg-white">
+                <EmptyState />
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 国家部委数据目录 */}
+        <section
+          id="ministry-catalog"
+          className="scroll-mt-28 border-t border-slate-200 pt-12"
+        >
+          <div className="mb-7">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
+              <Landmark className="h-4 w-4" />
+              国家部委行业数据
+            </div>
+
+            <h2 className="text-3xl font-black text-slate-900">
+              国家部委数据目录
+            </h2>
+
+            <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-500">
+              集中展示已纳入数据地图的国家部委数据来源。当前覆盖交通运输部、民政部、
+              国家卫生健康委、国家医疗保障局、公安部和教育部，不包含市场监管总局。
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {ministryCatalogs.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                className="group flex min-h-[310px] flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_14px_32px_rgba(196,30,58,0.08)]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-sm font-black text-[#C41E3A] transition group-hover:bg-[#C41E3A] group-hover:text-white">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+
+                  <span
+                    className={[
+                      "rounded-full px-3 py-1 text-xs font-bold",
+                      item.status === "已接入"
+                        ? "bg-red-50 text-[#C41E3A]"
+                        : "bg-amber-50 text-amber-700",
+                    ].join(" ")}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-xl font-black text-slate-900 transition group-hover:text-[#C41E3A]">
+                  {item.name}
+                </h3>
+
+                <p className="mt-3 min-h-[72px] text-sm leading-7 text-slate-500">
+                  {item.description}
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.stats.map((stat) => (
+                    <span
+                      key={stat}
+                      className="rounded-md bg-red-50 px-2.5 py-1 text-xs font-bold text-[#C41E3A]"
+                    >
+                      {stat}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
+                  <span className="text-sm font-bold text-[#C41E3A]">
+                    查看相关目录
+                  </span>
+
+                  <ArrowRight className="h-4 w-4 text-[#C41E3A] transition group-hover:translate-x-1" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
+  );
+}
+
+type StatCardProps = {
+  icon: typeof Database;
+  label: string;
+  value: number;
+  unit: string;
+  note: string;
+};
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  unit,
+  note,
+}: StatCardProps) {
+  return (
+    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <div className="flex items-center gap-3 text-sm text-slate-500">
+        <Icon className="h-5 w-5 text-[#C41E3A]" />
+        {label}
+      </div>
+
+      <div className="mt-3 flex items-end gap-1">
+        <span className="text-4xl font-black text-[#C41E3A]">
+          {value}
+        </span>
+        <span className="mb-1 text-sm text-slate-400">{unit}</span>
+      </div>
+
+      <div className="mt-2 text-xs leading-5 text-slate-400">
+        {note}
+      </div>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
+        <Search className="h-5 w-5 text-slate-400" />
+      </div>
+
+      <div className="mt-4 font-bold text-slate-700">
+        未找到匹配的资源
+      </div>
+
+      <p className="mt-2 text-sm text-slate-400">
+        请调整搜索关键词或领域筛选条件
+      </p>
+    </div>
   );
 }

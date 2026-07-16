@@ -1,195 +1,455 @@
-export const authorizedResources = [
+export type AuthorizedResourceItem = {
+  id: string;
+  name: string;
+  description: string;
+  examples: string[];
+};
+
+export type AuthorizedResourceDomain = {
+  id: string;
+  name: string;
+  shortName: string;
+  resourceCount: number;
+  description: string;
+  resources: AuthorizedResourceItem[];
+};
+
+export const authorizedResourceDomains: AuthorizedResourceDomain[] = [
   {
-    id: 1,
-    field: "应急管理",
-    scenario: "安全生产智能监管",
-    resource:
-      "安全生产许可证信息、施工许可证工程信息、生产经营单位台账信息、危大工程安全管理信息、建设工程安全隐患和安全风险信息等",
-    department: "市应急局",
-    direction: "公共治理、公益事业",
-    products: "生产经营单位安全资质画像服务、危大工程安全管理监测服务等",
+    id: "medical-health",
+    name: "医疗健康",
+    shortName: "医疗",
+    resourceCount: 7,
+    description:
+      "覆盖医保结算、医疗诊疗、公共卫生、健康管理及医疗机构运营等公共数据资源。",
+    resources: [
+      {
+        id: "medical-insurance",
+        name: "医保参保缴费与结算数据",
+        description:
+          "包括医保参保、缴费、就诊、费用结算、医保目录及定点医药机构等数据。",
+        examples: [
+          "医保结算清单",
+          "医保费用就诊明细",
+          "医保费用诊断结算明细",
+          "医保费用项目",
+          "医保参保人员及单位基本信息",
+          "持卡人信息",
+          "参保缴费信息",
+          "异地申请信息",
+          "医保目录信息",
+          "医疗机构收费票据",
+          "定点医药机构基础信息",
+        ],
+      },
+      {
+        id: "medical-examination",
+        name: "检验检查与医学影像数据",
+        description:
+          "包括检验检查、医学影像、电子病历、诊断报告、慢病随访及院前急救等数据。",
+        examples: [
+          "检查检验结果及病理信息",
+          "医学影像数据",
+          "医疗机构就诊信息",
+          "医疗机构诊断报告",
+          "电子病历",
+          "院前急救病历",
+          "住院记录",
+          "高血压随访记录",
+          "糖尿病随访记录",
+          "中医医疗机构病案",
+          "重大慢性疾病防治数据",
+          "就诊处方",
+          "就诊结算费用",
+        ],
+      },
+      {
+        id: "medicine-material",
+        name: "医药耗材与许可备案数据",
+        description:
+          "包括药品统计，以及药品、医疗器械和化妆品不良反应等数据。",
+        examples: [
+          "医疗机构药品统计数据",
+          "医疗机构药品不良反应数据",
+          "医疗器械不良反应数据",
+          "化妆品不良反应数据",
+        ],
+      },
+      {
+        id: "public-health",
+        name: "公共卫生监测与人群筛查数据",
+        description:
+          "包括传染病、呼吸道疾病、肠道传染病及重点人群筛查数据。",
+        examples: [
+          "传染病监控数据",
+          "呼吸道疾病监测数据",
+          "肠道传染病病例",
+          "两癌筛查报告",
+        ],
+      },
+      {
+        id: "health-management",
+        name: "健康管理与慢病监测数据",
+        description: "包括老年人健康分析、常见病及慢病健康管理等数据。",
+        examples: ["老年人健康分析", "老年人常见病"],
+      },
+      {
+        id: "medical-operation",
+        name: "医疗机构运营与科研数据",
+        description:
+          "包括医疗机构运营、实验室管理及医疗科研成果转化等数据。",
+        examples: [
+          "医疗机构基本信息",
+          "医疗机构运营数据",
+          "医疗机构实验室管理数据",
+          "医疗机构科研成果转化数据",
+        ],
+      },
+      {
+        id: "population-service",
+        name: "公共人口服务",
+        description: "包括自然人失踪、死亡及死因等公共人口服务数据。",
+        examples: ["自然人失踪信息", "自然人死因信息", "自然人死亡信息"],
+      },
+    ],
   },
   {
-    id: 2,
-    field: "绿色低碳",
-    scenario: "碳排放监测分析",
-    resource:
-      "行业碳减排分析信息、行业碳排放智能核算信息、区域碳减排分析信息、区域碳排放智能核算信息、重点碳排放单位名称信息、北京市碳排放权交易试点信息等",
-    department: "市生态环保局",
-    direction: "公共治理、公益事业",
-    products:
-      "行业碳排放智能核算服务、行业碳减排分析服务、区域碳排放智能核算服务、区域碳减排分析服务、重点碳排放单位画像服务、碳排放权交易试点查询服务等",
+    id: "education",
+    name: "教育教学",
+    shortName: "教育",
+    resourceCount: 5,
+    description:
+      "覆盖学生、招生考试、教师管理、教学资源及人才职业技能分析等数据。",
+    resources: [
+      {
+        id: "student-basic",
+        name: "学校学生基础信息",
+        description: "包括学生基础、学籍学历学位、家庭及就业等信息。",
+        examples: [
+          "各类学生基础信息",
+          "学生学籍学历学位信息",
+          "学位英语信息",
+          "学生家庭信息",
+          "学生证书信息",
+          "毕业生就业信息",
+        ],
+      },
+      {
+        id: "admission-exam",
+        name: "招生与考试信息",
+        description: "包括招生考试报名、考试结果等信息。",
+        examples: ["招生考试报名信息", "考试结果信息"],
+      },
+      {
+        id: "teacher-management",
+        name: "教师管理数据",
+        description: "包括教师资格、职称、培训、荣誉及优秀成果等数据。",
+        examples: [
+          "教师师德荣誉称号",
+          "教师优秀成果",
+          "教师资格证书",
+          "教师培训评选",
+          "教师职称评审",
+        ],
+      },
+      {
+        id: "teaching-resource",
+        name: "中小学全学科教学资源",
+        description: "包括全学科教材、教学资源及知识点讲解信息。",
+        examples: ["全学科教学教材", "全学科知识点讲解"],
+      },
+      {
+        id: "talent-skill",
+        name: "人才职业技能分析",
+        description:
+          "包括企业人员、教育学籍、综合荣誉及重点人群管理等数据。",
+        examples: [
+          "行政处罚及公示信息",
+          "企业人员信息",
+          "教育学籍与校园荣誉",
+          "综合荣誉表彰",
+          "积分落户专项获奖",
+          "重点人群专项管理",
+        ],
+      },
+    ],
   },
   {
-    id: 3,
-    field: "金融服务",
-    scenario: "企业经营发展监测",
-    resource:
-      "楼宇入驻企业信息、商务楼宇基本信息、重点园区基本信息、高精尖产业发展资金企业申报信息、北京市“专精特新”中小企业名单信息、企业年报基本信息等",
-    department: "市市场监管局、市商务局、市经信局",
-    direction: "产业发展、行业发展",
-    products: "重点区域企业画像服务、企业资质画像服务等",
+    id: "financial-services",
+    name: "金融服务",
+    shortName: "金融",
+    resourceCount: 6,
+    description:
+      "覆盖不动产、公积金、参保就业、信用评价、市场主体监管及税务征缴等数据。",
+    resources: [
+      {
+        id: "real-estate",
+        name: "不动产数据",
+        description: "包括不动产登记、交易、抵押及房屋许可备案等数据。",
+        examples: [
+          "不动产信息",
+          "不动产交易信息",
+          "抵押人及抵押品信息",
+          "房屋许可备案信息",
+          "购房资格申请信息",
+          "建设工程类企业资质及人员证书",
+          "工程指标信息",
+          "居住项目方案养老配套信息",
+        ],
+      },
+      {
+        id: "housing-fund",
+        name: "住房公积金缴存数据",
+        description: "包括公积金缴存、提取、贷款、抵押及违规不良信息。",
+        examples: [
+          "公积金缴存及提取信息",
+          "公积金贷款抵押信息",
+          "公积金使用信息",
+          "公积金违规不良信息",
+        ],
+      },
+      {
+        id: "employment-insurance",
+        name: "参保就业数据",
+        description: "包括社会保险、就业创业、求职、退休及人员资格等数据。",
+        examples: [
+          "社保参保单位及自然人基本信息",
+          "社保征缴信息",
+          "毕业生就业创业信息",
+          "就失业人员信息",
+          "求职档案信息",
+          "资格考试考生信息",
+          "自然人荣誉信息",
+          "自然人黑名单信息",
+          "退休人员信息",
+        ],
+      },
+      {
+        id: "credit-evaluation",
+        name: "信用评价数据",
+        description: "包括企业和自然人信用、行政许可及失信信息。",
+        examples: [
+          "行业企业信用信息",
+          "行政许可信息",
+          "失信主体信息",
+          "信用评价承诺信息",
+          "严重违法失信企业档案",
+          "自然人信用信息",
+          "失信被执行人信息",
+        ],
+      },
+      {
+        id: "market-supervision",
+        name: "市场主体监管数据",
+        description:
+          "包括企业登记、年报、经营异常、资质、股权、投资及行业监管数据。",
+        examples: [
+          "企业年报信息",
+          "商务楼宇及入驻信息",
+          "企业资质与产业申报信息",
+          "企业登记变更注销信息",
+          "企业经营异常及严重违法失信信息",
+          "企业基础信息",
+          "企业股权质押信息",
+          "企业金融指标信息",
+          "投资人相关信息",
+          "企业主要人员及职务信息",
+          "企业许可备案信息",
+          "企业荣誉信息",
+          "行业统计指标信息",
+          "投诉举报信息",
+        ],
+      },
+      {
+        id: "taxation",
+        name: "税务征缴数据",
+        description: "包括增值税开票、税收征收、欠税及涉税违法等数据。",
+        examples: [
+          "增值税开票信息",
+          "税务处罚及重大涉税违法信息",
+          "全税种税收征收信息",
+          "分行业税收收入信息",
+          "自然人及法人欠税信息",
+        ],
+      },
+    ],
   },
   {
-    id: 4,
-    field: "金融服务",
-    scenario: "营运货车保险风控",
-    resource:
-      "危化品运输联合备案申请单信息、危化品运输联合备案车辆信息、危化品运输联合备案线路信息、网络货运车辆和企业信息、冷链运输运单信息、冷链运输车辆和企业信息、危险驾驶行为报警信息等",
-    department: "市交通委",
-    direction: "产业发展、行业发展",
-    products: "危险驾驶行为报警监测服务、重载普货车辆注册信息查询服务等",
+    id: "transportation",
+    name: "交通运输",
+    shortName: "交通",
+    resourceCount: 3,
+    description: "覆盖道路车辆、驾驶员及交通执法监管等数据。",
+    resources: [
+      {
+        id: "road-vehicle",
+        name: "道路车辆管理数据",
+        description:
+          "包括机动车、新能源车辆、网约车、车辆维保及车辆抵押等数据。",
+        examples: [
+          "机动车行驶证信息",
+          "机动车基础信息",
+          "新能源车辆运行监测信息",
+          "网约车相关信息",
+          "车辆维保信息",
+          "车辆抵押信息",
+        ],
+      },
+      {
+        id: "driver-management",
+        name: "驾驶员管理数据",
+        description: "包括驾驶员信用、驾驶员抄告及运单等信息。",
+        examples: ["驾驶员信用信息", "驾驶员抄告信息", "运单信息"],
+      },
+      {
+        id: "traffic-enforcement",
+        name: "交通执法监管数据",
+        description: "包括交通执法文书、违法处罚和报警等数据。",
+        examples: ["交通执法文书信息", "交通违法处罚信息", "短视频报警信息"],
+      },
+    ],
   },
   {
-    id: 5,
-    field: "金融服务",
-    scenario: "养老金融服务",
-    resource:
-      "机构基本信息、机构运营质量、市场与竞争情况、政策合规情况、人员队伍情况、经营收入情况、项目信息、养老服务机构运营补贴发放信息、老年人福利补贴发放信息、养老机构信息等",
-    department: "市民政局",
-    direction: "产业发展、行业发展",
-    products:
-      "养老机构授信调查报告服务、养老机构信用评级服务、养老机构综合风险评级服务、养老机构经营能力评估服务、养老机构运营服务能力评估服务、养老机构护理能力评估服务、养老机构风险预警服务、养老机构批量筛查服务、养老服务机构运营补贴发放信息查询服务、养老机构信息查询服务等",
+    id: "green-low-carbon",
+    name: "绿色低碳",
+    shortName: "低碳",
+    resourceCount: 2,
+    description: "覆盖气象、碳排放、供水及公共资源消耗数据。",
+    resources: [
+      {
+        id: "climate-carbon",
+        name: "气候与碳排放数据",
+        description: "包括气象日值、实时天气及温室气体排放清单。",
+        examples: ["气象站日值数据", "实时天气信息", "本市温室气体排放清单"],
+      },
+      {
+        id: "water-power",
+        name: "供电供水信息",
+        description: "包括企业用水缴费等公共资源使用信息。",
+        examples: ["企业用水缴费信息"],
+      },
+    ],
   },
   {
-    id: 6,
-    field: "金融服务",
-    scenario: "企业授信风控",
-    resource:
-      "税务申报数据、发票交易数据、创投数据、企业登记注册信息、企业年报基本信息、高精尖产业发展资金企业申报信息等",
-    department: "市税务局",
-    direction: "产业发展、行业发展",
-    products:
-      "企业授信调查报告服务、企业信用画像服务、企业纳税能力评估服务、企业发票真实性核验服务、企业上下游交易关系分析服务、企业供应链画像服务、企业成长性评估服务、科技企业创新能力画像服务、企业融资能力评估服务、企业贷前准入核验服务、企业经营异常预警服务、企业风险预警服务、专精特新企业识别服务、高成长企业识别服务、企业产业链分析服务",
+    id: "culture-tourism",
+    name: "文化旅游",
+    shortName: "文旅",
+    resourceCount: 2,
+    description: "覆盖住宿行业、文化活动及文旅资源开发管理数据。",
+    resources: [
+      {
+        id: "accommodation",
+        name: "住宿行业管理数据",
+        description: "包括住宿登记及住宿行业管理相关信息。",
+        examples: ["住宿信息"],
+      },
+      {
+        id: "culture-resource",
+        name: "文旅资源普查与开发管理",
+        description: "包括文化活动、演出及相关文旅资源信息。",
+        examples: ["文化活动及演出信息"],
+      },
+    ],
   },
   {
-    id: 7,
-    field: "医疗健康",
-    scenario: "商业保险反欺诈与理赔核验",
-    resource:
-      "死亡医学证明信息、死亡登记信息、死亡原因分类信息、死亡时间信息、死亡地点信息等",
-    department: "市卫健委、疾控中心",
-    direction: "产业发展、行业发展",
-    products:
-      "被保险人生存状态核验服务、死亡登记信息核验服务、死亡医学证明核验服务、寿险理赔真实性核验服务、重复理赔风险识别服务、理赔欺诈风险识别服务、保单存续状态核验服务、失联人员风险核验服务、身故赔付自动核验服务、保险赔付风险预警服务等",
+    id: "government-services",
+    name: "政务服务",
+    shortName: "政务",
+    resourceCount: 3,
+    description: "覆盖民生服务、执业管理和行政处罚等数据。",
+    resources: [
+      {
+        id: "public-service-management",
+        name: "民生服务管理数据",
+        description:
+          "包括社会救助、养老服务、残疾人、退役军人及农产品监测等数据。",
+        examples: [
+          "老年人福利补贴发放信息",
+          "低收入低保特困信息",
+          "社会救助信息",
+          "临时救助信息",
+          "残疾人信息",
+          "退役军人及优抚人员信息",
+          "公共服务机构信息",
+          "养老机构信息",
+          "养老机构运营数据",
+          "农产品行情价格信息",
+          "农产品市场监测指标信息",
+        ],
+      },
+      {
+        id: "professional-management",
+        name: "执业管理数据",
+        description:
+          "包括身份户籍、婚姻、出生证明、职业资格、出入境及司法执业监管等数据。",
+        examples: [
+          "自然人身份户籍信息",
+          "流动人口登记信息",
+          "婚姻登记信息",
+          "出生证明信息",
+          "职业执业从业资格证照",
+          "护照信息",
+          "人像资源信息",
+          "个人出入境业务信息",
+          "居住证信息",
+          "司法涉诉与执业监管信息",
+        ],
+      },
+      {
+        id: "punishment",
+        name: "处罚数据",
+        description: "包括行政处罚、治安处罚及其他违法处罚信息。",
+        examples: ["行政处罚信息", "治安处罚信息", "违法处罚信息"],
+      },
+    ],
   },
   {
-    id: 8,
-    field: "医疗健康",
-    scenario: "居民健康管理综合服务",
-    resource:
-      "电子病历信息、心电图检查信息、一般检查信息、内科检查信息、胸部X线检查信息、体检记录信息、甲状腺超声检查信息、随访结论信息、外科检查信息、腹部超声检查信息等",
-    department: "市医保局、市卫健委",
-    direction: "产业发展、行业发展",
-    products: "医疗病历电子档案服务、一般检查信息查询服务等",
-  },
-  {
-    id: 9,
-    field: "医疗健康",
-    scenario: "商业保险直赔快赔服务",
-    resource:
-      "健康档案基本信息、收费信息、诊断明细报告信息、签约服务包信息、门诊处方记录信息、医保就诊结算信息、医疗门诊收费票据信息、医疗机构信息、定点零售药店信息、北京市医保药品信息目录、药品产品信息等",
-    department: "市医保局、市卫健委",
-    direction: "产业发展、行业发展",
-    products: "自然人就医基本信息查询服务、自然人就医收费明细电子档案服务等",
-  },
-  {
-    id: 10,
-    field: "医疗健康",
-    scenario: "健康保险产品设计",
-    resource:
-      "医保险种目录基本信息、医保个人信息、医保参保单位信息、医院就诊信息、医保费用信息、医保结算清单信息、诊疗服务信息、医保参保信息、医保征缴信息、医保备案信息、生育服务信息、异地就医信息等",
-    department: "市医保局",
-    direction: "产业发展、行业发展",
-    products: "医保基础画像服务、医保服务动态监测等",
-  },
-  {
-    id: 11,
-    field: "医疗健康",
-    scenario: "跨院病历和诊疗信息临床辅助诊疗",
-    resource:
-      "门急诊检验信息、门急诊检查信息、住院检验信息、住院检查信息、手术记录、麻醉信息、住院病案首页信息、首日病程信息、入院记录信息、医嘱记录信息、护理记录信息、病程记录信息、会诊记录/MDT记录信息、出院小结信息、出院带药信息等",
-    department: "市医保局、市卫健委",
-    direction: "产业发展、行业发展",
-    products: "医院诊疗数据查询服务、医疗病历电子档案服务等",
-  },
-  {
-    id: 12,
-    field: "交通运输",
-    scenario: "自动驾驶算法模型训练与优化",
-    resource: "自动驾驶车辆信息、路侧设备直接采集的视频和点云信息等",
-    department: "市双智办",
-    direction: "产业发展、行业发展",
-    products:
-      "自动驾驶脱敏视频数据集、自动驾驶车辆行为脱敏数据集、道路感知脱敏数据集等",
-  },
-  {
-    id: 13,
-    field: "交通运输",
-    scenario: "新能源车辆状态监测及预警",
-    resource: "新能源车辆信息、车辆充电信息、车辆故障信息、车辆行驶信息等",
-    department: "市经信局",
-    direction: "产业发展、行业发展",
-    products: "车辆信息查询服务、车辆充电状态查询服务、车辆故障状态监测服务等",
-  },
-  {
-    id: 14,
-    field: "交通运输",
-    scenario: "车路安全风险预警",
-    resource:
-      "自动驾驶车辆实时轨迹信息、新能源车辆实时轨迹信息、营运车辆实时轨迹信息、线路和站点信息、订单信息、ETC门架过车量信息、交通流量调查信息、卡口过车信息、交通管制信息、交通相关环保指标信息、实时气象信息等",
-    department: "市双智办、市交通委、市公安局、市生态局、市气象局",
-    direction: "产业发展、行业发展",
-    products: "车辆实时轨迹监测服务、线路和站点查询服务等",
-  },
-  {
-    id: 15,
-    field: "交通运输",
-    scenario: "车辆交易风控",
-    resource: "车辆抵押信息、车辆违章信息、车辆过户信息等",
-    department: "市公安局",
-    direction: "产业发展、行业发展",
-    products: "车辆抵押查询服务、车辆违法查询服务等",
-  },
-  {
-    id: 16,
-    field: "交通运输",
-    scenario: "车辆投保风控",
-    resource: "网约车备案信息、合规网约车车辆信息等",
-    department: "市交通委",
-    direction: "产业发展、行业发展",
-    products: "网约车备案查询服务、合规网约车查询服务等",
-  },
-  {
-    id: 17,
-    field: "教育教学",
-    scenario: "教育行业大模型服务",
-    resource:
-      "中小学课程建设和管理规范性文件信息、课程基本信息、课程表信息、班级课程信息、名师讲堂课程表信息、思政工作相关课程培训信息、文博讲堂在线课程视频课程资源信息、语文学科资料信息等",
-    department: "市教委",
-    direction: "产业发展、行业发展",
-    products:
-      "基础教育全年级课标信息查询服务、基础教育全年级各科考点信息查询服务、科普知识点信息查询服务等",
-  },
-  {
-    id: 18,
-    field: "城市治理",
-    scenario: "空置物业盘活监测分析",
-    resource:
-      "物业项目信息、物业小区检查信息、商务楼宇基本信息、物业服务企业信息、房屋租赁平台租赁信息、企业登记注册信息、企业经营场所信息、企业所得税征收信息、征收缴费_单位征缴明细信息、重点园区基本信息、产业基地、园区清单等",
-    department: "市市场监管局、市住建委、市人社局、市税务局",
-    direction: "产业发展、行业发展",
-    products:
-      "物业项目信息查询服务、物业小区检查信息查询服务、商务楼宇基本信息查询服务、物业服务企业信息查询服务、房屋租赁平台租赁信息查询服务等",
-  },
-  {
-    id: 19,
-    field: "科技创新",
-    scenario: "创新医药研发",
-    resource:
-      "医保三目录信息、药品采购信息、药品招采交易结算信息、医院制剂医保报销目录信息、制剂备案审批信息、医保追溯信息等",
-    department: "市医保局、市药监局",
-    direction: "产业发展、行业发展",
-    products: "医保三目录画像服务、药品招采画像服务、制剂备案审批信息查询服务等",
+    id: "urban-governance",
+    name: "城市治理",
+    shortName: "城市",
+    resourceCount: 1,
+    description: "覆盖城市防汛及积水监测等城市运行数据。",
+    resources: [
+      {
+        id: "flood-control",
+        name: "防汛监测数据",
+        description: "包括城市道路、区域积水等防汛监测信息。",
+        examples: ["积水监测信息"],
+      },
+    ],
   },
 ];
+
+export const authorizedResourceSummary = {
+  domainCount: authorizedResourceDomains.length,
+  resourceCount: authorizedResourceDomains.reduce(
+    (total, domain) => total + domain.resources.length,
+    0
+  ),
+};
+
+export function getAuthorizedDomainById(id: string) {
+  return authorizedResourceDomains.find((item) => item.id === id);
+}
+
+export function getAuthorizedResourceById(
+  domainId: string,
+  resourceId: string
+) {
+  const domain = getAuthorizedDomainById(domainId);
+
+  if (!domain) {
+    return undefined;
+  }
+
+  const resource = domain.resources.find((item) => item.id === resourceId);
+
+  if (!resource) {
+    return undefined;
+  }
+
+  return {
+    domain,
+    resource,
+  };
+}

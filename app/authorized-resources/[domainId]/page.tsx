@@ -10,20 +10,6 @@ export default function AuthorizedResourcesPage() {
       {/* 页面头部 */}
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-          {/* 面包屑 */}
-          <div className="mb-5 flex items-center gap-2 text-sm text-slate-400">
-            <Link
-              href="/"
-              className="transition hover:text-[#C41E3A]"
-            >
-              首页
-            </Link>
-
-            <span>/</span>
-
-            <span className="text-slate-600">授权资源</span>
-          </div>
-
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
               <div className="mb-3 inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-[#C41E3A]">
@@ -78,9 +64,9 @@ export default function AuthorizedResourcesPage() {
         </div>
       </section>
 
-      {/* 领域资源列表 */}
+      {/* 授权领域 */}
       <section className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-end justify-between">
           <div>
             <h2 className="text-2xl font-black text-slate-900">
               授权领域

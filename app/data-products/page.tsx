@@ -1,191 +1,207 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  BookOpen,
+  Building2,
+  Car,
+  CheckCircle2,
+  Clock3,
+  Database,
+  FileText,
+  HeartPulse,
   Package,
   ShieldCheck,
-  Car,
-  HeartPulse,
   Users,
-  Building2,
-  Leaf,
-  Brain,
 } from "lucide-react";
+import { dataCatalog } from "@/data/dataMapCatalog";
+
+type CatalogProduct = {
+  id?: string;
+  name: string;
+  shortName?: string;
+  category?: string;
+  type?: string;
+  status?: string;
+  stage?: string;
+  description?: string;
+  input?: string;
+  output?: string;
+  scenario?: string;
+};
+
+type ProductCard = {
+  id: string;
+  title: string;
+  category: string;
+  type: string;
+  status?: string;
+  stage?: string;
+  desc: string;
+  scenes: string[];
+  href: string;
+  icon: typeof Package;
+  catalogId: string;
+};
+
+const catalogMeta: Record<
+  string,
+  {
+    category: string;
+    icon: typeof Package;
+    href: string;
+  }
+> = {
+  transport: {
+    category: "交通运输产品",
+    icon: Car,
+    href: "/data-catalog/transport#products",
+  },
+  civil: {
+    category: "民政养老产品",
+    icon: Users,
+    href: "/data-catalog/civil#products",
+  },
+  education: {
+    category: "教育教学产品",
+    icon: BookOpen,
+    href: "/data-catalog/education#products",
+  },
+  finance: {
+    category: "金融服务产品",
+    icon: Building2,
+    href: "/data-catalog/finance#products",
+  },
+  nhc: {
+    category: "医疗健康产品",
+    icon: HeartPulse,
+    href: "/data-catalog/nhc#products",
+  },
+  nhsa: {
+    category: "医疗保障产品",
+    icon: HeartPulse,
+    href: "/data-catalog/nhsa#products",
+  },
+  mps: {
+    category: "公安交管产品",
+    icon: ShieldCheck,
+    href: "/data-catalog/mps#products",
+  },
+  "literature-art": {
+    category: "文化艺术产品",
+    icon: FileText,
+    href: "/data-catalog/literature-art#products",
+  },
+};
+
+function splitScenes(value?: string) {
+  if (!value) return [];
+
+  return value
+    .split(/[、，,；;\/]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function getProductDescription(product: CatalogProduct) {
+  if (product.description) return product.description;
+
+  if (product.output) {
+    return product.input
+      ? `基于${product.input}，形成${product.output}。`
+      : product.output;
+  }
+
+  return "围绕相关数据资源形成标准化数据产品能力，具体产品说明持续完善。";
+}
+
+function buildProductCards(): ProductCard[] {
+  return dataCatalog.flatMap((catalog) => {
+    const meta = catalogMeta[catalog.id] ?? {
+      category: `${catalog.name}产品`,
+      icon: Database,
+      href: `/data-catalog/${catalog.id}#products`,
+    };
+
+    return ((catalog.products ?? []) as CatalogProduct[]).map(
+      (product, index) => ({
+        id: product.id ?? `${catalog.id}-${index + 1}`,
+        title: product.name,
+        category: meta.category,
+        type: product.category ?? product.type ?? "数据产品",
+        status: product.status,
+        stage: product.stage,
+        desc: getProductDescription(product),
+        scenes: splitScenes(product.scenario),
+        href: meta.href,
+        icon:
+          product.name.includes("评分") ||
+          product.type === "评分类" ||
+          product.category === "评分类"
+            ? ShieldCheck
+            : meta.icon,
+        catalogId: catalog.id,
+      })
+    );
+  });
+}
 
 export default function DataProductsPage() {
-  const products = [
-    {
-      title: "车维全景动察系列产品",
-      category: "交通运输产品",
-      type: "查询类 / 核验类",
-      icon: Car,
-      desc: "基于汽车维修电子健康档案，提供维修次数、结算时间、维修里程、故障情况、配件情况、项目工时、维修单位、营运属性识别等能力。",
-      scenes: ["保险风控", "二手车评估", "汽车金融", "车辆核验"],
-      href: "/data-catalog/transport",
-    },
-    {
-      title: "车辆基础健康评分",
-      category: "交通运输产品",
-      type: "评分类",
-      icon: ShieldCheck,
-      desc: "围绕维修记录、故障记录、配件更换、维修里程等指标，形成综合健康评分、评分维度、风险等级和扣分说明。",
-      scenes: ["二手车交易", "车辆残值评估", "保险定价", "金融授信"],
-      href: "/data-catalog/transport",
-    },
-    {
-      title: "车辆维修风险预测评分模型",
-      category: "交通运输产品",
-      type: "预测类 / 模型类",
-      icon: Car,
-      desc: "基于车辆历史维修记录、车型、车龄、里程、故障和配件更换情况，预测未来维修风险和重点故障部位。",
-      scenes: ["汽车金融", "保险续保", "车辆管理", "风险预警"],
-      href: "/data-catalog/transport",
-    },
-    {
-      title: "维修行为异常识别",
-      category: "交通运输产品",
-      type: "模型类",
-      icon: ShieldCheck,
-      desc: "识别异常维修、频繁维修、重大维修、费用异常等风险特征，辅助保险理赔和金融机构风险判断。",
-      scenes: ["保险反欺诈", "理赔风控", "贷前审核", "风险筛查"],
-      href: "/data-catalog/transport",
-    },
-    {
-      title: "企业授信调查报告服务",
-      category: "金融服务产品",
-      type: "报告类",
-      icon: Building2,
-      desc: "整合企业登记注册、税务申报、发票交易、创投、企业年报、高精尖资金申报等数据，形成企业授信调查报告。",
-      scenes: ["银行授信审批", "贷前调查", "普惠金融", "企业风控"],
-      href: "/data-catalog/finance",
-    },
-    {
-      title: "企业信用画像服务",
-      category: "金融服务产品",
-      type: "画像类",
-      icon: Building2,
-      desc: "从主体资质、经营状态、纳税能力、交易关系、成长性和风险预警等维度形成企业信用画像。",
-      scenes: ["企业授信", "供应链金融", "产业金融", "风险预警"],
-      href: "/data-catalog/finance",
-    },
-    {
-      title: "企业发票真实性核验服务",
-      category: "金融服务产品",
-      type: "核验类",
-      icon: ShieldCheck,
-      desc: "基于发票交易数据，对企业交易真实性、上下游交易关系、异常发票风险等进行辅助核验。",
-      scenes: ["供应链金融", "授信风控", "贷前准入", "交易核验"],
-      href: "/data-catalog/finance",
-    },
-    {
-      title: "养老机构授信调查报告服务",
-      category: "民政养老产品",
-      type: "报告类",
-      icon: Users,
-      desc: "围绕养老机构基础信息、床位规模、运营能力、护理能力、补贴情况和经营收入情况，形成授信调查报告。",
-      scenes: ["养老金融", "银行授信", "机构评估", "产业风控"],
-      href: "/data-catalog/civil",
-    },
-    {
-      title: "养老机构综合风险评级服务",
-      category: "民政养老产品",
-      type: "评分类",
-      icon: Users,
-      desc: "基于机构运营质量、政策合规、人员队伍、经营收入、补贴发放、检查结果等信息，形成综合风险评级。",
-      scenes: ["养老监管", "金融风控", "机构筛查", "风险预警"],
-      href: "/data-catalog/civil",
-    },
-    {
-      title: "商业保险反欺诈与理赔核验服务",
-      category: "医疗健康产品",
-      type: "核验类 / 风控类",
-      icon: HeartPulse,
-      desc: "基于死亡医学证明、死亡登记、死亡原因、死亡时间、死亡地点等信息，支撑寿险理赔真实性核验和反欺诈识别。",
-      scenes: ["寿险理赔", "保险反欺诈", "身故赔付核验", "风险预警"],
-      href: "/authorized-resources",
-    },
-    {
-      title: "医疗病历电子档案服务",
-      category: "医疗健康产品",
-      type: "查询类 / 档案类",
-      icon: HeartPulse,
-      desc: "整合电子病历、检验检查、体检记录、诊断明细、门诊处方、医保结算等信息，形成医疗病历电子档案服务。",
-      scenes: ["健康管理", "商业保险直赔", "跨院辅助诊疗", "医疗服务"],
-      href: "/authorized-resources",
-    },
-    {
-      title: "医保基础画像服务",
-      category: "医疗健康产品",
-      type: "画像类",
-      icon: HeartPulse,
-      desc: "基于医保参保、医保费用、医保结算清单、诊疗服务、异地就医和生育服务等信息，形成医保基础画像。",
-      scenes: ["健康保险产品设计", "医保服务监测", "保险定价", "健康管理"],
-      href: "/authorized-resources",
-    },
-    {
-      title: "自动驾驶脱敏视频数据集",
-      category: "智能网联汽车产品",
-      type: "数据集类",
-      icon: Brain,
-      desc: "基于自动驾驶车辆信息、路侧设备视频和点云信息，形成自动驾驶算法模型训练与优化所需的数据集。",
-      scenes: ["自动驾驶训练", "道路感知", "车路协同", "算法优化"],
-      href: "/industry/auto",
-    },
-    {
-      title: "新能源车辆状态监测服务",
-      category: "智能网联汽车产品",
-      type: "监测类",
-      icon: Car,
-      desc: "基于新能源车辆信息、充电信息、故障信息和行驶信息，支撑车辆状态监测及风险预警。",
-      scenes: ["新能源车辆监测", "充电状态查询", "故障预警", "车企服务"],
-      href: "/industry/auto",
-    },
-    {
-      title: "碳排放智能核算服务",
-      category: "绿色低碳产品",
-      type: "核算类 / 分析类",
-      icon: Leaf,
-      desc: "基于行业碳排放核算、区域碳减排分析、重点碳排放单位和碳交易试点信息，支撑双碳监测分析。",
-      scenes: ["碳排放监测", "绿色金融", "双碳监管", "区域减排分析"],
-      href: "/authorized-resources",
-    },
-    {
-      title: "城市闲置资产高效配置监测分析",
-      category: "城市治理产品",
-      type: "分析类",
-      icon: Building2,
-      desc: "基于物业项目、商务楼宇、房屋租赁、企业经营场所、重点园区等数据，支撑空置物业盘活和城市更新。",
-      scenes: ["城市更新", "楼宇经济", "资产盘活", "园区运营"],
-      href: "/authorized-resources",
-    },
-  ];
+  const products = buildProductCards();
 
-  const categories = Array.from(new Set(products.map((item) => item.category)));
-  const sceneCount = new Set(products.flatMap((item) => item.scenes)).size;
-  const typeCount = new Set(products.map((item) => item.type)).size;
+  const categories = Array.from(
+    new Set(products.map((item) => item.category))
+  );
+
+  const sceneCount = new Set(
+    products.flatMap((item) => item.scenes)
+  ).size;
+
+  const typeCount = new Set(
+    products.map((item) => item.type)
+  ).size;
+
+  const transportProducts = products.filter(
+    (item) => item.catalogId === "transport"
+  );
+
+  const onlineTransportProducts = transportProducts.filter(
+    (item) => item.status === "已上线"
+  ).length;
+
+  const developingTransportProducts = transportProducts.filter(
+    (item) => item.status === "开发中"
+  ).length;
 
   return (
-    <main className="min-h-screen bg-[#F7F8FA] pt-28 pb-16">
-      <div className="mx-auto max-w-7xl px-10">
-        <div className="mb-10">
+    <main className="min-h-screen bg-[#F7F8FA] pb-16 pt-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        {/* 页面标题 */}
+        <section className="mb-10">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
             <Package className="h-4 w-4" />
             数据产品
           </div>
 
-          <h1 className="text-[42px] font-black text-slate-900">
+          <h1 className="text-[42px] font-black tracking-tight text-slate-900">
             数据产品总览
           </h1>
 
-          <p className="mt-3 max-w-4xl text-slate-500">
-            面向金融、保险、交通、医疗、民政、双碳、城市治理和产业赋能等场景，展示可发布、可交付、可运营的数据产品服务能力。
+          <p className="mt-3 max-w-4xl leading-7 text-slate-500">
+            统一汇集数据目录中已经形成或正在建设的数据产品，
+            产品名称、类型、状态和说明均从统一数据目录自动读取。
           </p>
-        </div>
+        </section>
 
-        <div className="mb-10 grid gap-6 md:grid-cols-4">
+        {/* 总体统计 */}
+        <section className="mb-6 grid gap-6 md:grid-cols-4">
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="text-sm text-slate-500">产品数量</div>
             <div className="mt-2 text-4xl font-black text-[#C41E3A]">
               {products.length}
+            </div>
+            <div className="mt-2 text-xs text-slate-400">
+              自动汇总数据目录产品
             </div>
           </div>
 
@@ -194,12 +210,18 @@ export default function DataProductsPage() {
             <div className="mt-2 text-4xl font-black text-[#C41E3A]">
               {categories.length}
             </div>
+            <div className="mt-2 text-xs text-slate-400">
+              按领域和来源分类
+            </div>
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="text-sm text-slate-500">服务场景</div>
             <div className="mt-2 text-4xl font-black text-[#C41E3A]">
               {sceneCount}
+            </div>
+            <div className="mt-2 text-xs text-slate-400">
+              根据产品应用场景汇总
             </div>
           </div>
 
@@ -208,10 +230,53 @@ export default function DataProductsPage() {
             <div className="mt-2 text-4xl font-black text-[#C41E3A]">
               {typeCount}
             </div>
+            <div className="mt-2 text-xs text-slate-400">
+              查询、报告、评分、模型等
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mb-8 flex flex-wrap gap-3">
+        {/* 交通产品进度 */}
+        {transportProducts.length > 0 && (
+          <section className="mb-10 rounded-3xl border border-red-100 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div className="text-sm font-bold text-[#C41E3A]">
+                  交通运输产品建设进度
+                </div>
+
+                <h2 className="mt-2 text-2xl font-black text-slate-900">
+                  车维全景动察01—08及车辆健康评分
+                </h2>
+
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  共形成{transportProducts.length}个交通运输数据产品，
+                  其中{onlineTransportProducts}个已上线、
+                  {developingTransportProducts}个开发中。
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">
+                  产品总数 {transportProducts.length}
+                </div>
+
+                <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
+                  <CheckCircle2 className="h-4 w-4" />
+                  已上线 {onlineTransportProducts}
+                </div>
+
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700">
+                  <Clock3 className="h-4 w-4" />
+                  开发中 {developingTransportProducts}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 产品分类 */}
+        <section className="mb-8 flex flex-wrap gap-3">
           {categories.map((category) => (
             <span
               key={category}
@@ -220,65 +285,101 @@ export default function DataProductsPage() {
               {category}
             </span>
           ))}
-        </div>
+        </section>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((item) => {
-            const Icon = item.icon;
+        {/* 产品列表 */}
+        {products.length > 0 ? (
+          <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {products.map((item) => {
+              const Icon = item.icon;
 
-            return (
-              <div
-                key={item.title}
-                className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="mb-5 flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C41E3A]">
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-
-                    <div>
-                      <div className="mb-1 text-xs font-bold text-[#C41E3A]">
-                        {item.category}
+              return (
+                <article
+                  key={`${item.catalogId}-${item.id}`}
+                  className="flex min-h-[390px] flex-col rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#C41E3A]">
+                        <Icon className="h-6 w-6 text-white" />
                       </div>
 
-                      <h2 className="font-black text-slate-900">
-                        {item.title}
-                      </h2>
+                      <div className="min-w-0">
+                        <div className="mb-1 text-xs font-bold text-[#C41E3A]">
+                          {item.category}
+                        </div>
 
-                      <div className="mt-1 text-xs text-slate-400">
-                        {item.type}
+                        <h2 className="font-black leading-6 text-slate-900">
+                          {item.title}
+                        </h2>
+
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <span className="text-xs text-slate-400">
+                            {item.type}
+                          </span>
+
+                          {item.status && (
+                            <span
+                              className={[
+                                "rounded-full px-2.5 py-1 text-xs font-bold",
+                                item.status === "已上线"
+                                  ? "bg-red-50 text-[#C41E3A]"
+                                  : "bg-amber-50 text-amber-700",
+                              ].join(" ")}
+                            >
+                              {item.status}
+                            </span>
+                          )}
+
+                          {item.stage && (
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">
+                              {item.stage}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <p className="mb-5 min-h-[96px] text-sm leading-6 text-slate-500">
-                  {item.desc}
-                </p>
+                  <p className="mb-5 text-sm leading-7 text-slate-500">
+                    {item.desc}
+                  </p>
 
-                <div className="mb-6 flex flex-wrap gap-2">
-                  {item.scenes.map((scene) => (
-                    <span
-                      key={scene}
-                      className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
-                    >
-                      {scene}
-                    </span>
-                  ))}
-                </div>
+                  {item.scenes.length > 0 && (
+                    <div className="mb-6 flex flex-wrap gap-2">
+                      {item.scenes.map((scene) => (
+                        <span
+                          key={scene}
+                          className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                        >
+                          {scene}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                <Link
-                  href={item.href}
-                  className="inline-flex items-center gap-2 font-bold text-[#C41E3A]"
-                >
-                  查看产品详情
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            );
-          })}
-        </div>
+                  <Link
+                    href={item.href}
+                    className="mt-auto inline-flex items-center gap-2 border-t border-slate-100 pt-5 font-bold text-[#C41E3A]"
+                  >
+                    查看产品详情
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </article>
+              );
+            })}
+          </section>
+        ) : (
+          <section className="rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
+            <Package className="mx-auto h-9 w-9 text-slate-300" />
+            <div className="mt-4 font-bold text-slate-600">
+              暂无数据产品
+            </div>
+            <p className="mt-2 text-sm text-slate-400">
+              请先在 dataMapCatalog.ts 中补充产品清单。
+            </p>
+          </section>
+        )}
       </div>
     </main>
   );

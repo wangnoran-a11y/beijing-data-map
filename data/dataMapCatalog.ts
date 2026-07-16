@@ -1,10 +1,12 @@
 export const dataCatalog = [
   {
     id: "transport",
+    group: "ministry",
+    ministry: "交通运输部",
     name: "交通运输",
     source: "交通运输部 / 汽车维修电子健康档案",
     summary:
-      "覆盖维修基础信息、维修配件信息、维修工时信息等核心数据，支撑保险风控、二手车评估、汽车金融、车辆健康评估等场景。",
+    "依托汽车维修电子健康档案数据，形成车维全景动察01—08及车辆健康评分共9个数据产品，其中4个产品已上线，5个产品正在开发，重点支撑车险风控、汽车金融、二手车流通及汽车后市场服务。",
     stats: {
       tables: 3,
       fields: 58,
@@ -441,137 +443,103 @@ export const dataCatalog = [
     ],
     products: [
   {
+    id: "vehicle-insight-01",
     name: "车维全景动察-01（维修总次数）",
-    type: "查询类",
-    input: "VIN、查询时间段、维修企业名称",
-    output: "维修总次数、维修时间分布、维修企业信息",
-    scenario: "保险风控、二手车交易、汽车金融",
+    shortName: "维修总次数",
+    category: "查询类",
+    status: "已上线",
+    stage: "可用阶段",
+    description:
+      "基于车辆VIN码及查询时间范围，统计车辆历史维修、保养总次数。",
   },
   {
+    id: "vehicle-insight-02",
     name: "车维全景动察-02（结算时间）",
-    type: "查询类",
-    input: "VIN、查询时间段",
-    output: "维修结算时间、维修周期、结算状态",
-    scenario: "理赔核验、车辆维保核查",
+    shortName: "结算时间",
+    category: "查询类",
+    status: "已上线",
+    stage: "可用阶段",
+    description:
+      "基于车辆VIN码，查询车辆维修记录对应的业务结算时间。",
   },
   {
+    id: "vehicle-insight-03",
     name: "车维全景动察-03（维修里程）",
-    type: "查询类",
-    input: "VIN、查询时间段",
-    output: "维修里程、里程变化趋势、里程异常提示",
-    scenario: "二手车评估、汽车金融风控",
+    shortName: "维修里程",
+    category: "查询类",
+    status: "已上线",
+    stage: "可用阶段",
+    description:
+      "基于车辆VIN码，查询车辆维修记录对应的行驶里程信息。",
   },
   {
+    id: "vehicle-insight-04",
     name: "车维全景动察-04（维修故障情况）",
-    type: "查询类",
-    input: "VIN、故障类型、查询时间段",
-    output: "故障描述、故障次数、故障类别、故障部位",
-    scenario: "车辆风险识别、保险定价",
+    shortName: "维修故障情况",
+    category: "查询类",
+    status: "开发中",
+    stage: "开发阶段",
+    description:
+      "基于车辆维修记录，查询车辆历史故障、故障部位及相关维修情况。",
   },
   {
+    id: "vehicle-insight-05",
     name: "车维全景动察-05（维修配件情况）",
-    type: "查询类",
-    input: "VIN、配件名称、查询时间段",
-    output: "配件更换记录、配件数量、配件金额、配件类型",
-    scenario: "事故识别、车辆残值评估",
+    shortName: "维修配件情况",
+    category: "查询类",
+    status: "开发中",
+    stage: "开发阶段",
+    description:
+      "基于车辆维修记录，查询维修过程中使用的配件及相关信息。",
   },
   {
+    id: "vehicle-insight-06",
     name: "车维全景动察-06（维修项目工时）",
-    type: "查询类",
-    input: "VIN、维修项目、查询时间段",
-    output: "维修项目、维修工时、工时费用",
-    scenario: "维修成本分析、理赔核验",
+    shortName: "维修项目工时",
+    category: "查询类",
+    status: "开发中",
+    stage: "开发阶段",
+    description:
+      "基于车辆维修记录，查询维修项目、工时及相关作业信息。",
   },
   {
+    id: "vehicle-insight-07",
     name: "车维全景动察-07（维修单位）",
-    type: "查询类",
-    input: "VIN、维修企业名称",
-    output: "维修单位名称、维修次数、服务记录、区域信息",
-    scenario: "车辆维保核验、维修企业评估",
+    shortName: "维修单位",
+    category: "查询类",
+    status: "已上线",
+    stage: "可用阶段",
+    description:
+      "基于车辆VIN码，查询车辆维修记录对应的维修企业或维修单位信息。",
   },
   {
-    name: "车维全景动察-08（车辆营运属性识别）",
-    type: "模型类",
-    input: "VIN、维修频次、维修里程、维修时间分布、维修费用",
-    output: "营运属性识别结果、置信度、风险提示",
-    scenario: "保险风控、汽车金融",
+    id: "vehicle-insight-08",
+    name: "车维全景动察-08（营运车）",
+    shortName: "营运车识别",
+    category: "查询类",
+    status: "开发中",
+    stage: "开发阶段",
+    description:
+      "基于车辆维修记录及相关特征，提供车辆营运属性查询与识别能力。",
   },
   {
-    name: "维修行为异常识别",
-    type: "模型类",
-    input: "VIN、维修频次、维修金额、故障描述、配件记录",
-    output: "异常维修风险等级、异常原因、风险标签",
-    scenario: "保险反欺诈、理赔风控",
-  },
-  {
-    name: "车辆维修风险预测评分模型",
-    type: "预测类",
-    input: "VIN、历史维修记录、车型、车龄、里程、故障记录",
-    output: "维修风险评分、未来维修风险、重点故障部位、风险概率",
-    scenario: "汽车金融、保险续保、车辆管理",
-  },
-  {
-    name: "车辆基础健康评分-综合健康评分",
-    type: "评分类",
-    input: "VIN、维修次数、故障记录、配件更换、维修里程",
-    output: "综合健康评分、健康等级、主要风险因子",
-    scenario: "二手车交易、金融授信、保险定价",
-  },
-  {
-    name: "车辆基础健康评分-健康评分维度",
-    type: "评分类",
-    input: "VIN、维修记录、故障记录、配件记录、工时记录",
-    output: "里程维度评分、故障维度评分、配件维度评分、工时维度评分",
-    scenario: "车辆健康评估、二手车检测、保险定价",
-  },
-  {
-    name: "车辆基础健康评分-风险等级",
-    type: "评分类",
-    input: "VIN、综合健康评分、故障频次、维修金额、维修里程",
-    output: "风险等级、高中低风险标识、风险说明",
-    scenario: "金融风控、保险风控、二手车交易",
-  },
-  {
-    name: "车辆基础健康评分-健康评分扣分说明",
-    type: "报告类",
-    input: "VIN、健康评分、维修明细、故障明细、配件明细",
-    output: "扣分项说明、扣分原因、风险部位、维修建议",
-    scenario: "二手车评估、车主报告、车辆管理",
-  },
-  {
-    name: "车辆维修习惯分析模型",
-    type: "报告类",
-    input: "VIN、维修时间、维修企业、维修项目、维修频次",
-    output: "维修习惯画像、保养规律、维修偏好、维修周期",
-    scenario: "车主画像、后市场运营",
-  },
-  {
-    name: "车型维修趋势分析模型",
-    type: "报告类",
-    input: "品牌、车型、维修记录、故障记录、配件记录",
-    output: "车型故障趋势、维修成本趋势、常见故障、配件更换趋势",
-    scenario: "车企质量分析、后市场研究、产业分析",
-  },
-  {
-    name: "维修企业服务能力评分",
-    type: "评分类",
-    input: "维修企业名称、维修记录、结算周期、服务频次、维修项目",
-    output: "企业服务能力评分、服务规模、质量提示、区域排名",
-    scenario: "行业监管、企业评级、维修服务评估",
-  },
-  {
-    name: "区域维修市场分析",
-    type: "报告类",
-    input: "区域、维修企业、维修记录、车型分布、维修项目",
-    output: "区域维修规模、热门车型、维修企业分布、维修市场趋势",
-    scenario: "产业分析、市场研判、区域运营",
+    id: "vehicle-health-score",
+    name: "车辆健康评分",
+    shortName: "车辆健康评分",
+    category: "评分类",
+    status: "开发中",
+    stage: "开发阶段",
+    description:
+      "基于车辆维修频次、里程、故障、配件及工时等信息，形成车辆健康综合评分。",
   },
 ],
   },
   {
     id: "civil",
+    group: "ministry",
+    ministry: "民政部",
     name: "民政养老",
-    source: "民政部门 / 养老机构信息",
+    source: "民政部 / 养老机构信息",
     summary:
       "覆盖养老机构基础信息、床位信息、运营信息、补贴信息、人员信息等，支撑养老金融、机构监管、产业分析等场景。",
     stats: {
@@ -754,8 +722,10 @@ export const dataCatalog = [
   },
   {
     id: "education",
+    group: "ministry",
+    ministry: "教育部",
     name: "教育教学",
-    source: "教育部门 / 教师学生信息",
+    source: "教育部 / 教育教学数据",
     summary:
       "覆盖教师、学生、学校等教育基础信息字段，支撑教育治理、教育服务和教育行业大模型建设。",
     stats: {
@@ -1015,6 +985,7 @@ export const dataCatalog = [
   },
   {
     id: "finance",
+    group: "public",
     name: "金融服务",
     source: "金融公共数据专区 / 企业经营与授信风控数据",
     summary:
@@ -1340,6 +1311,7 @@ export const dataCatalog = [
   
   {
     id: "literature-art",
+    group: "industry",
     name: "文联文化",
     source: "文联数据 / 文艺资源数据",
     summary:
@@ -1544,4 +1516,85 @@ export const dataCatalog = [
       },
     ],
   },
+
+  {
+    id: "nhc",
+    group: "ministry",
+    ministry: "国家卫生健康委员会",
+    name: "医疗健康",
+    source: "国家卫生健康委员会 / 医疗健康数据",
+    summary:
+      "覆盖居民健康、电子病历、诊疗服务、疾病防控、老年健康及医疗机构运营等数据资源。当前目录框架已建立，具体数据表、字段及产品清单待结合实际接入情况持续补充。",
+    stats: {
+      tables: 0,
+      fields: 0,
+      records: "目录建设中",
+    },
+    tables: [],
+    products: [],
+  },
+  {
+    id: "nhsa",
+    group: "ministry",
+    ministry: "国家医疗保障局",
+    name: "医疗保障",
+    source: "国家医疗保障局 / 医保数据",
+    summary:
+      "覆盖医保目录、医保结算、医保费用、药品耗材、异地就医及医保追溯等数据资源。当前目录框架已建立，具体数据表、字段及产品清单待结合实际接入情况持续补充。",
+    stats: {
+      tables: 0,
+      fields: 0,
+      records: "目录建设中",
+    },
+    tables: [],
+    products: [],
+  },
+  {
+    id: "mps",
+    group: "ministry",
+    ministry: "公安部",
+    name: "公安交管",
+    source: "公安部 / 公安交管数据",
+    summary:
+      "覆盖机动车登记、驾驶证、交通违法、车辆过户、车辆抵押及相关公安交管数据资源。当前目录框架已建立，具体数据表、字段及产品清单待结合实际接入情况持续补充。",
+    stats: {
+      tables: 0,
+      fields: 0,
+      records: "目录建设中",
+    },
+    tables: [],
+    products: [],
+  },
+
 ];
+
+export const ministryCatalog = dataCatalog.filter(
+  (item) => item.group === "ministry"
+);
+
+export const publicCatalog = dataCatalog.filter(
+  (item) => item.group === "public"
+);
+
+export const industryCatalog = dataCatalog.filter(
+  (item) => item.group === "industry"
+);
+
+export const dataCatalogSummary = {
+  catalogCount: dataCatalog.length,
+  ministryCount: ministryCatalog.length,
+  publicCount: publicCatalog.length,
+  industryCount: industryCatalog.length,
+  tableCount: dataCatalog.reduce(
+    (sum, item) => sum + (item.stats?.tables ?? 0),
+    0
+  ),
+  fieldCount: dataCatalog.reduce(
+    (sum, item) => sum + (item.stats?.fields ?? 0),
+    0
+  ),
+  productCount: dataCatalog.reduce(
+    (sum, item) => sum + (item.products?.length ?? 0),
+    0
+  ),
+};
