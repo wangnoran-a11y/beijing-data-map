@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-const DEMO_PASSWORD = "bjdatamap2026";
+const DEMO_PASSWORD = "BJdatamap2026";
+const AUTH_KEY = "bjdatamap_authed_v2";
 
 export default function LoginGate({ children }: { children: React.ReactNode }) {
   const [authed, setAuthed] = useState(false);
@@ -10,7 +11,7 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (sessionStorage.getItem("bjdatamap_authed") === "true") {
+    if (sessionStorage.getItem(AUTH_KEY) === "true") {
       setAuthed(true);
     }
   }, []);
@@ -19,8 +20,9 @@ export default function LoginGate({ children }: { children: React.ReactNode }) {
     e?.preventDefault();
 
     if (password.trim() === DEMO_PASSWORD) {
-      sessionStorage.setItem("bjdatamap_authed", "true");
+      sessionStorage.setItem(AUTH_KEY, "true");
       setAuthed(true);
+      setError("");
       return;
     }
 

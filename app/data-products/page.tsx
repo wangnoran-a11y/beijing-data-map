@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -10,6 +13,7 @@ import {
   FileText,
   HeartPulse,
   Package,
+  Search,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -47,51 +51,56 @@ const catalogMeta: Record<
   string,
   {
     category: string;
+    shortLabel: string;
+    description: string;
     icon: typeof Package;
     href: string;
   }
 > = {
   transport: {
     category: "交通运输产品",
+    shortLabel: "交通运输",
+    description: "围绕汽车维修电子健康档案数据形成车辆维保查询、风险识别和健康评分等产品。",
     icon: Car,
     href: "/data-catalog/transport#products",
   },
   civil: {
     category: "民政养老产品",
+    shortLabel: "民政养老",
+    description: "围绕养老机构基础画像、运营风险识别和服务能力评价形成数据产品。",
     icon: Users,
     href: "/data-catalog/civil#products",
   },
   education: {
     category: "教育教学产品",
+    shortLabel: "教育教学",
+    description: "围绕教育基础信息、教师队伍和学生学籍等重点数据形成查询分析产品。",
     icon: BookOpen,
     href: "/data-catalog/education#products",
   },
   finance: {
     category: "金融服务产品",
+    shortLabel: "金融服务",
+    description: "围绕企业授信、经营监测、额度测算及四流一致性核验形成金融风控产品。",
     icon: Building2,
     href: "/data-catalog/finance#products",
   },
-  nhc: {
-    category: "医疗健康产品",
-    icon: HeartPulse,
-    href: "/data-catalog/nhc#products",
-  },
-  nhsa: {
-    category: "医疗保障产品",
-    icon: HeartPulse,
-    href: "/data-catalog/nhsa#products",
-  },
-  mps: {
-    category: "公安交管产品",
-    icon: ShieldCheck,
-    href: "/data-catalog/mps#products",
-  },
   "literature-art": {
     category: "文化艺术产品",
+    shortLabel: "文化艺术",
+    description: "围绕文艺人才、作品版权、价值评估、传播分析及文化资源地图形成文化数据产品。",
     icon: FileText,
     href: "/data-catalog/literature-art#products",
   },
 };
+
+const catalogOrder = [
+  "transport",
+  "civil",
+  "education",
+  "finance",
+  "literature-art",
+];
 
 function splitScenes(value?: string) {
   if (!value) return [];
@@ -117,11 +126,9 @@ function getProductDescription(product: CatalogProduct) {
 
 function buildProductCards(): ProductCard[] {
   return dataCatalog.flatMap((catalog) => {
-    const meta = catalogMeta[catalog.id] ?? {
-      category: `${catalog.name}产品`,
-      icon: Database,
-      href: `/data-catalog/${catalog.id}#products`,
-    };
+    const meta = catalogMeta[catalog.id];
+
+    if (!meta) return [];
 
     return ((catalog.products ?? []) as CatalogProduct[]).map(
       (product, index) => ({
@@ -147,29 +154,59 @@ function buildProductCards(): ProductCard[] {
 }
 
 export default function DataProductsPage() {
-  const products = buildProductCards();
+  const products = useMemo(() => buildProductCards(), []);
+  const [selectedCatalog, setSelectedCatalog] = useState("transport");
+  const [keyword, setKeyword] = useState("");
 
-  const categories = Array.from(
-    new Set(products.map((item) => item.category))
-  );
+  const catalogTabs = catalogOrder
+    .map((catalogId) => {
+      const meta = catalogMeta[catalogId];
+      const count = products.filter((item) => item.catalogId === catalogId).length;
 
-  const sceneCount = new Set(
-    products.flatMap((item) => item.scenes)
-  ).size;
+      return {
+        id: catalogId,
+        label: meta.shortLabel,
+        category: meta.category,
+        description: meta.description,
+        icon: meta.icon,
+        href: meta.href,
+        count,
+      };
+    })
+    .filter((item) => item.count > 0);
 
-  const typeCount = new Set(
-    products.map((item) => item.type)
-  ).size;
+  const filteredProducts = products.filter((item) => {
+    const matchCatalog =
+      selectedCatalog === "all" || item.catalogId === selectedCatalog;
+    const q = keyword.trim().toLowerCase();
+    const matchKeyword =
+      !q ||
+      item.title.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q) ||
+      item.type.toLowerCase().includes(q) ||
+      item.scenes.some((scene) => scene.toLowerCase().includes(q));
 
-  const transportProducts = products.filter(
-    (item) => item.catalogId === "transport"
-  );
+    return matchCatalog && matchKeyword;
+  });
 
-  const onlineTransportProducts = transportProducts.filter(
+  const categories = new Set(products.map((item) => item.category)).size;
+  const sceneCount = new Set(products.flatMap((item) => item.scenes)).size;
+  const typeCount = new Set(products.map((item) => item.type)).size;
+
+  const selectedMeta =
+    selectedCatalog === "all"
+      ? null
+      : catalogTabs.find((item) => item.id === selectedCatalog) ?? null;
+
+  const selectedProducts =
+    selectedCatalog === "all"
+      ? products
+      : products.filter((item) => item.catalogId === selectedCatalog);
+
+  const onlineCount = selectedProducts.filter(
     (item) => item.status === "已上线"
   ).length;
-
-  const developingTransportProducts = transportProducts.filter(
+  const developingCount = selectedProducts.filter(
     (item) => item.status === "开发中"
   ).length;
 
@@ -177,7 +214,7 @@ export default function DataProductsPage() {
     <main className="min-h-screen bg-[#F7F8FA] pb-16 pt-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* 页面标题 */}
-        <section className="mb-10">
+        <section className="mb-9">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
             <Package className="h-4 w-4" />
             数据产品
@@ -188,155 +225,188 @@ export default function DataProductsPage() {
           </h1>
 
           <p className="mt-3 max-w-4xl leading-7 text-slate-500">
-            统一汇集数据目录中已经形成或正在建设的数据产品，
-            产品名称、类型、状态和说明均从统一数据目录自动读取。
+            按重点领域分类展示已形成及正在建设的数据产品，支持按领域快速切换查看，
+            产品名称、类型、状态和说明均从统一数据目录读取。
           </p>
         </section>
 
         {/* 总体统计 */}
-        <section className="mb-6 grid gap-6 md:grid-cols-4">
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="text-sm text-slate-500">产品数量</div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {products.length}
+        <section className="mb-8 grid gap-4 md:grid-cols-4">
+          {[
+            ["产品数量", String(products.length), "当前汇总产品"],
+            ["产品领域", String(categories), "重点产品领域"],
+            ["服务场景", String(sceneCount), "产品应用场景"],
+            ["产品类型", String(typeCount), "查询、报告、评分、模型等"],
+          ].map(([label, value, note]) => (
+            <div
+              key={label}
+              className="rounded-3xl border border-slate-100 bg-white px-6 py-5 shadow-sm"
+            >
+              <div className="text-sm font-medium text-slate-500">{label}</div>
+              <div className="mt-2 text-[28px] font-black leading-none text-[#C41E3A]">
+                {value}
+              </div>
+              <div className="mt-2 text-xs text-slate-400">{note}</div>
             </div>
-            <div className="mt-2 text-xs text-slate-400">
-              自动汇总数据目录产品
+          ))}
+        </section>
+
+        {/* 领域筛选 */}
+        <section className="mb-8 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-xl font-black text-slate-900">按领域查看产品</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                点击领域标签，仅展示该领域的数据产品，避免逐页下滑查找。
+              </p>
+            </div>
+
+            <div className="flex h-11 w-full items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 lg:w-[330px]">
+              <Search className="h-4 w-4 shrink-0 text-slate-400" />
+              <input
+                value={keyword}
+                onChange={(event) => setKeyword(event.target.value)}
+                placeholder="搜索产品名称、类型或场景"
+                className="min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+              />
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="text-sm text-slate-500">产品类别</div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {categories.length}
-            </div>
-            <div className="mt-2 text-xs text-slate-400">
-              按领域和来源分类
-            </div>
-          </div>
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              type="button"
+              onClick={() => setSelectedCatalog("all")}
+              className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                selectedCatalog === "all"
+                  ? "bg-[#C41E3A] text-white shadow-sm"
+                  : "bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-[#C41E3A]"
+              }`}
+            >
+              全部产品 {products.length}
+            </button>
 
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="text-sm text-slate-500">服务场景</div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {sceneCount}
-            </div>
-            <div className="mt-2 text-xs text-slate-400">
-              根据产品应用场景汇总
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="text-sm text-slate-500">产品类型</div>
-            <div className="mt-2 text-4xl font-black text-[#C41E3A]">
-              {typeCount}
-            </div>
-            <div className="mt-2 text-xs text-slate-400">
-              查询、报告、评分、模型等
-            </div>
+            {catalogTabs.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSelectedCatalog(item.id)}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  selectedCatalog === item.id
+                    ? "bg-[#C41E3A] text-white shadow-sm"
+                    : "bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-[#C41E3A]"
+                }`}
+              >
+                {item.label} {item.count}
+              </button>
+            ))}
           </div>
         </section>
 
-        {/* 交通产品进度 */}
-        {transportProducts.length > 0 && (
-          <section className="mb-10 rounded-3xl border border-red-100 bg-white p-6 shadow-sm">
+        {/* 当前领域概览 */}
+        {selectedMeta && (
+          <section className="mb-8 rounded-3xl border border-red-100 bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <div className="text-sm font-bold text-[#C41E3A]">
-                  交通运输产品建设进度
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50">
+                  <selectedMeta.icon className="h-6 w-6 text-[#C41E3A]" />
                 </div>
-
-                <h2 className="mt-2 text-2xl font-black text-slate-900">
-                  车维全景动察01—08及车辆健康评分
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  共形成{transportProducts.length}个交通运输数据产品，
-                  其中{onlineTransportProducts}个已上线、
-                  {developingTransportProducts}个开发中。
-                </p>
+                <div>
+                  <div className="text-xs font-bold text-[#C41E3A]">当前领域</div>
+                  <h2 className="mt-1 text-2xl font-black text-slate-900">
+                    {selectedMeta.category}
+                  </h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+                    {selectedMeta.description}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex flex-wrap gap-3">
-                <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">
-                  产品总数 {transportProducts.length}
-                </div>
-
-                <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
-                  <CheckCircle2 className="h-4 w-4" />
-                  已上线 {onlineTransportProducts}
-                </div>
-
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700">
-                  <Clock3 className="h-4 w-4" />
-                  开发中 {developingTransportProducts}
-                </div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">
+                  产品 {selectedMeta.count}
+                </span>
+                {onlineCount > 0 && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
+                    <CheckCircle2 className="h-4 w-4" />
+                    已上线 {onlineCount}
+                  </span>
+                )}
+                {developingCount > 0 && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700">
+                    <Clock3 className="h-4 w-4" />
+                    开发中 {developingCount}
+                  </span>
+                )}
+                <Link
+                  href={selectedMeta.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A] transition hover:bg-red-100"
+                >
+                  查看领域目录
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </section>
         )}
 
-        {/* 产品分类 */}
-        <section className="mb-8 flex flex-wrap gap-3">
-          {categories.map((category) => (
-            <span
-              key={category}
-              className="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm"
-            >
-              {category}
-            </span>
-          ))}
+        {/* 当前结果标题 */}
+        <section className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900">
+              {selectedMeta ? selectedMeta.category : "全部数据产品"}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              当前显示 {filteredProducts.length} 个产品
+              {keyword.trim() ? `，搜索关键词“${keyword.trim()}”` : ""}
+            </p>
+          </div>
         </section>
 
         {/* 产品列表 */}
-        {products.length > 0 ? (
-          <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((item) => {
+        {filteredProducts.length > 0 ? (
+          <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProducts.map((item) => {
               const Icon = item.icon;
 
               return (
                 <article
                   key={`${item.catalogId}-${item.id}`}
-                  className="flex min-h-[390px] flex-col rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  className="group flex min-h-[350px] flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_12px_28px_rgba(196,30,58,0.08)]"
                 >
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#C41E3A]">
-                        <Icon className="h-6 w-6 text-white" />
+                  <div className="mb-5 flex items-start gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-50 transition group-hover:bg-[#C41E3A]">
+                      <Icon className="h-5 w-5 text-[#C41E3A] transition group-hover:text-white" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <div className="mb-1 text-xs font-bold text-[#C41E3A]">
+                        {item.category}
                       </div>
 
-                      <div className="min-w-0">
-                        <div className="mb-1 text-xs font-bold text-[#C41E3A]">
-                          {item.category}
-                        </div>
+                      <h3 className="font-black leading-6 text-slate-900">
+                        {item.title}
+                      </h3>
 
-                        <h2 className="font-black leading-6 text-slate-900">
-                          {item.title}
-                        </h2>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span className="text-xs text-slate-400">{item.type}</span>
 
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <span className="text-xs text-slate-400">
-                            {item.type}
+                        {item.status && (
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                              item.status === "已上线"
+                                ? "bg-red-50 text-[#C41E3A]"
+                                : "bg-amber-50 text-amber-700"
+                            }`}
+                          >
+                            {item.status}
                           </span>
+                        )}
 
-                          {item.status && (
-                            <span
-                              className={[
-                                "rounded-full px-2.5 py-1 text-xs font-bold",
-                                item.status === "已上线"
-                                  ? "bg-red-50 text-[#C41E3A]"
-                                  : "bg-amber-50 text-amber-700",
-                              ].join(" ")}
-                            >
-                              {item.status}
-                            </span>
-                          )}
-
-                          {item.stage && (
-                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">
-                              {item.stage}
-                            </span>
-                          )}
-                        </div>
+                        {item.stage && (
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">
+                            {item.stage}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -360,10 +430,10 @@ export default function DataProductsPage() {
 
                   <Link
                     href={item.href}
-                    className="mt-auto inline-flex items-center gap-2 border-t border-slate-100 pt-5 font-bold text-[#C41E3A]"
+                    className="mt-auto inline-flex items-center justify-between border-t border-slate-100 pt-5 text-sm font-bold text-[#C41E3A]"
                   >
                     查看产品详情
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                   </Link>
                 </article>
               );
@@ -372,11 +442,9 @@ export default function DataProductsPage() {
         ) : (
           <section className="rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
             <Package className="mx-auto h-9 w-9 text-slate-300" />
-            <div className="mt-4 font-bold text-slate-600">
-              暂无数据产品
-            </div>
+            <div className="mt-4 font-bold text-slate-600">未找到相关数据产品</div>
             <p className="mt-2 text-sm text-slate-400">
-              请先在 dataMapCatalog.ts 中补充产品清单。
+              可切换领域或调整搜索关键词后重新查看。
             </p>
           </section>
         )}

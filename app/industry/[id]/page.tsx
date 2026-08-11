@@ -3,26 +3,26 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
-  Factory,
-  Database,
-  FileText,
-  Target,
   CheckCircle2,
-  Table2,
-  Clock3,
+  Database,
+  Factory,
+  FileText,
+  Layers3,
+  Target,
 } from "lucide-react";
 import { industries } from "@/data/industryEmpowerment";
-import { dataCatalog } from "@/data/dataMapCatalog";
 
-type TransportProduct = {
-  id?: string;
-  name: string;
-  shortName?: string;
-  category?: string;
-  type?: string;
-  status?: string;
-  stage?: string;
-  description?: string;
+const sourceTypeClass = {
+  北京市公共数据: "bg-red-50 text-[#C41E3A]",
+  国家部委数据: "bg-amber-50 text-amber-700",
+  境外企业数据: "bg-slate-100 text-slate-600",
+};
+
+const maturityClass = {
+  高: "bg-red-50 text-[#C41E3A]",
+  较高: "bg-amber-50 text-amber-700",
+  中: "bg-blue-50 text-blue-700",
+  基础: "bg-slate-100 text-slate-600",
 };
 
 export default async function IndustryDetailPage({
@@ -31,65 +31,30 @@ export default async function IndustryDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
   const industry = industries.find((item) => item.id === id);
 
   if (!industry) {
     return notFound();
   }
 
-  const isAutoIndustry = industry.id === "auto";
-
-  const transportCatalog = dataCatalog.find(
-    (item) => item.id === "transport"
+  const sourceTypes = Array.from(
+    new Set((industry.resources ?? []).map((item) => item.sourceType))
   );
-
-  const transportProducts = (
-    transportCatalog?.products ?? []
-  ) as TransportProduct[];
-
-  /**
-   * 智能网联汽车产业页直接读取交通运输部产品。
-   * 其他产业仍读取 industryEmpowerment.ts 中配置的产品。
-   */
-  const displayedProducts = isAutoIndustry
-    ? transportProducts
-    : industry.products;
-
-  const resourceCount = isAutoIndustry
-    ? transportCatalog?.tables?.length ?? industry.resources.length
-    : industry.resources.length;
-
-  const productCount = displayedProducts.length;
-
-  const onlineProductCount = isAutoIndustry
-    ? transportProducts.filter(
-        (product) => product.status === "已上线"
-      ).length
-    : 0;
-
-  const developingProductCount = isAutoIndustry
-    ? transportProducts.filter(
-        (product) => product.status === "开发中"
-      ).length
-    : 0;
 
   return (
     <main className="min-h-screen bg-[#F7F8FA] pb-16 pt-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {/* 返回 */}
         <Link
           href="/industry"
-          className="mb-8 inline-flex items-center gap-2 font-bold text-[#C41E3A]"
+          className="mb-7 inline-flex items-center gap-2 text-sm font-bold text-[#C41E3A]"
         >
           <ArrowLeft className="h-4 w-4" />
           返回数据赋能产业
         </Link>
 
-        {/* 页面头部 */}
-        <section className="rounded-3xl bg-white p-8 shadow-sm">
-          <div className="flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
-            <div>
+        <section className="rounded-3xl border border-slate-100 bg-white p-8 shadow-sm">
+          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-start">
+            <div className="max-w-4xl">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#C41E3A]">
                 <Factory className="h-4 w-4" />
                 数据赋能重点产业
@@ -99,334 +64,244 @@ export default async function IndustryDetailPage({
                 {industry.name}
               </h1>
 
-              <p className="mt-3 max-w-4xl leading-7 text-slate-500">
+              <p className="mt-3 text-sm font-bold text-[#C41E3A]">
+                {industry.policyName}
+              </p>
+
+              <p className="mt-4 max-w-4xl leading-7 text-slate-500">
                 {industry.desc}
               </p>
 
-              {isAutoIndustry && (
-                <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-500">
-                  依托交通运输部汽车维修电子健康档案数据，
-                  形成车维全景动察01—08及车辆健康评分共9个数据产品，
-                  重点支撑车险风控、汽车金融、二手车流通及汽车后市场服务。
-                </p>
-              )}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {(industry.directions ?? []).map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            {isAutoIndustry && (
-              <div className="flex shrink-0 flex-wrap gap-3">
-                <Link
-                  href="/data-catalog/transport"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#C41E3A] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#A81831]"
+            <div className="flex shrink-0 flex-wrap gap-2">
+              {sourceTypes.map((type) => (
+                <span
+                  key={type}
+                  className={`rounded-full px-3 py-2 text-xs font-bold ${sourceTypeClass[type as keyof typeof sourceTypeClass]}`}
                 >
-                  查看交通数据目录
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-
-                <Link
-                  href="/data-products"
-                  className="inline-flex items-center gap-2 rounded-full bg-red-50 px-5 py-3 text-sm font-bold text-[#C41E3A] transition hover:bg-red-100"
-                >
-                  查看数据产品
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            )}
+                  {type}
+                </span>
+              ))}
+              <span
+                className={`rounded-full px-3 py-2 text-xs font-bold ${maturityClass[industry.maturity as keyof typeof maturityClass]}`}
+              >
+                资源成熟度：{industry.maturity}
+              </span>
+            </div>
           </div>
 
-          {/* 统计 */}
-          <div
-            className={[
-              "mt-8 grid gap-5",
-              isAutoIndustry
-                ? "sm:grid-cols-2 lg:grid-cols-4"
-                : "md:grid-cols-3",
-            ].join(" ")}
-          >
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Database className="h-5 w-5 text-[#C41E3A]" />
-                可用数据资源
-              </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                label: "关联数据资源",
+                value: industry.resources?.length ?? 0,
+                note: "仅统计当前地图已有资源",
+                icon: Database,
+              },
+              {
+                label: "现有数据产品",
+                value: industry.products?.length ?? 0,
+                note: "仅引用当前产品目录",
+                icon: FileText,
+              },
+              {
+                label: "应用方向",
+                value: industry.scenarios?.length ?? 0,
+                note: "基于现有资源可拓展",
+                icon: Target,
+              },
+              {
+                label: "数据来源",
+                value: sourceTypes.length,
+                note: sourceTypes.join(" / "),
+                icon: Layers3,
+              },
+            ].map((stat) => {
+              const Icon = stat.icon;
 
-              <div className="mt-2 text-3xl font-black text-[#C41E3A]">
-                {resourceCount}
-              </div>
-
-              {isAutoIndustry && (
-                <div className="mt-1 text-xs text-slate-400">
-                  交通运输部核心数据表
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <FileText className="h-5 w-5 text-[#C41E3A]" />
-                数据产品服务
-              </div>
-
-              <div className="mt-2 text-3xl font-black text-[#C41E3A]">
-                {productCount}
-              </div>
-
-              {isAutoIndustry && (
-                <div className="mt-1 text-xs text-slate-400">
-                  8个查询类产品、1个评分类产品
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Target className="h-5 w-5 text-[#C41E3A]" />
-                应用场景
-              </div>
-
-              <div className="mt-2 text-3xl font-black text-[#C41E3A]">
-                {industry.scenarios.length}
-              </div>
-
-              <div className="mt-1 text-xs text-slate-400">
-                重点产业应用方向
-              </div>
-            </div>
-
-            {isAutoIndustry && (
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <Clock3 className="h-5 w-5 text-[#C41E3A]" />
-                  产品建设进度
-                </div>
-
-                <div className="mt-3 flex items-center gap-5">
-                  <div>
-                    <div className="text-2xl font-black text-[#C41E3A]">
-                      {onlineProductCount}
-                    </div>
-                    <div className="mt-1 text-xs text-slate-500">
-                      已上线
-                    </div>
+              return (
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border border-slate-100 bg-slate-50/70 p-5"
+                >
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <Icon className="h-4 w-4 text-[#C41E3A]" />
+                    {stat.label}
                   </div>
-
-                  <div className="h-10 w-px bg-slate-200" />
-
-                  <div>
-                    <div className="text-2xl font-black text-amber-600">
-                      {developingProductCount}
-                    </div>
-                    <div className="mt-1 text-xs text-slate-500">
-                      开发中
-                    </div>
+                  <div className="mt-3 text-[26px] font-black leading-none text-[#C41E3A]">
+                    {stat.value}
+                  </div>
+                  <div className="mt-2 text-xs leading-5 text-slate-400">
+                    {stat.note}
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
         </section>
 
-        {/* 智能网联汽车：数据表概览 */}
-        {isAutoIndustry && transportCatalog && (
-          <section className="mt-8 rounded-3xl bg-white p-8 shadow-sm">
-            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900">
-                  交通运输部数据资源
-                </h2>
+        <section className="mt-8">
+          <div className="mb-5">
+            <h2 className="text-2xl font-black text-slate-900">
+              关联数据资源
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">
+              以下资源均来自当前数据地图已有目录；同一资源可以支撑多个产业。
+            </p>
+          </div>
 
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  汽车维修电子健康档案包含以下核心数据表，
-                  共{transportCatalog.stats.fields}个字段，
-                  数据规模{transportCatalog.stats.records}。
+          <div className="grid gap-4 md:grid-cols-2">
+            {(industry.resources ?? []).map((resource, index) => (
+              <Link
+                key={`${resource.sourceType}-${resource.name}-${index}`}
+                href={resource.href || "/data-catalog"}
+                className="group rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:border-red-200 hover:shadow-md"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                        sourceTypeClass[resource.sourceType]
+                      }`}
+                    >
+                      {resource.sourceType}
+                    </span>
+
+                    <h3 className="mt-3 text-base font-black text-slate-900 transition group-hover:text-[#C41E3A]">
+                      {resource.name}
+                    </h3>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      来源：{resource.source}
+                    </p>
+
+                    {resource.note && (
+                      <p className="mt-2 text-xs font-bold text-slate-500">
+                        {resource.note}
+                      </p>
+                    )}
+                  </div>
+
+                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#C41E3A] transition group-hover:translate-x-1" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-black text-slate-900">
+                  现有数据产品
+                </h2>
+                <p className="mt-1 text-xs text-slate-400">
+                  只展示当前数据产品页已存在、与本产业可直接关联的产品。
                 </p>
               </div>
 
               <Link
-                href="/data-catalog/transport#fields"
-                className="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#C41E3A]"
+                href="/data-products"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C41E3A]"
               >
-                查看字段全表
-                <ArrowRight className="h-4 w-4" />
+                查看全部产品
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-3">
-              {transportCatalog.tables.map((table) => (
-                <Link
-                  key={table.tableName}
-                  href="/data-catalog/transport#fields"
-                  className="group rounded-2xl border border-slate-100 bg-slate-50 p-5 transition hover:-translate-y-1 hover:border-red-200 hover:bg-white hover:shadow-sm"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#C41E3A]">
-                    <Table2 className="h-5 w-5 text-white" />
-                  </div>
-
-                  <h3 className="mt-4 font-black text-slate-900 transition group-hover:text-[#C41E3A]">
-                    {table.tableCnName}
-                  </h3>
-
-                  <p className="mt-1 text-xs text-slate-400">
-                    {table.tableName}
-                  </p>
-
-                  <div className="mt-4 flex items-center justify-between rounded-xl bg-white px-4 py-3">
-                    <span className="text-sm text-slate-500">
-                      字段数量
-                    </span>
-
-                    <span className="font-black text-[#C41E3A]">
-                      {table.fieldCount}个
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 产业能力清单 */}
-        <section
-          className={[
-            "mt-8 grid gap-8",
-            isAutoIndustry
-              ? "lg:grid-cols-[0.85fr_1.5fr_0.85fr]"
-              : "md:grid-cols-3",
-          ].join(" ")}
-        >
-          {/* 可用数据资源 */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-xl font-black text-slate-900">
-              可用数据资源
-            </h2>
-
             <div className="space-y-3">
-              {industry.resources.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
-                >
-                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#C41E3A]" />
-                  <span>{item}</span>
-                </div>
-              ))}
-
-              {industry.resources.length === 0 && (
-                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400">
-                  暂无资源清单
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 数据产品服务 */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-black text-slate-900">
-                数据产品服务
-              </h2>
-
-              {isAutoIndustry && (
-                <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-[#C41E3A]">
-                  共{transportProducts.length}个
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              {isAutoIndustry
-                ? transportProducts.map((product, index) => (
-                    <Link
-                      key={product.id ?? product.name}
-                      href="/data-catalog/transport#products"
-                      className="group block rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-red-200 hover:bg-white"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-black text-[#C41E3A] shadow-sm">
-                          {String(index + 1).padStart(2, "0")}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
-                            <div className="font-black text-slate-900 transition group-hover:text-[#C41E3A]">
-                              {product.name}
-                            </div>
-
-                            <span
-                              className={[
-                                "w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-bold",
-                                product.status === "已上线"
-                                  ? "bg-red-50 text-[#C41E3A]"
-                                  : "bg-amber-50 text-amber-700",
-                              ].join(" ")}
-                            >
-                              {product.status ?? "规划中"}
-                            </span>
-                          </div>
-
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-slate-500">
-                              {product.category ??
-                                product.type ??
-                                "数据产品"}
-                            </span>
-
-                            {product.stage && (
-                              <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-slate-500">
-                                {product.stage}
-                              </span>
-                            )}
-                          </div>
-
-                          {product.description && (
-                            <p className="mt-3 text-sm leading-6 text-slate-500">
-                              {product.description}
-                            </p>
-                          )}
-                        </div>
+              {(industry.products?.length ?? 0) > 0 ? (
+                (industry.products ?? []).map((rawProduct: any, index: number) => {
+                  const product =
+                    typeof rawProduct === "string"
+                      ? { name: rawProduct, href: "/data-products", note: "" }
+                      : rawProduct ?? {};
+                  const productName =
+                    product.name ?? product.title ?? product.label ?? `数据产品${index + 1}`;
+                  const href =
+                    typeof product.href === "string" && product.href.trim()
+                      ? product.href
+                      : "/data-products";
+                  return (
+                  <Link
+                    key={`${productName}-${index}`}
+                    href={href}
+                    className="group flex items-start gap-3 rounded-2xl bg-slate-50 px-4 py-3.5 transition hover:bg-red-50/60"
+                  >
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#C41E3A]" />
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-slate-700 transition group-hover:text-[#C41E3A]">
+                        {productName}
                       </div>
-                    </Link>
-                  ))
-                : industry.products.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-start gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
-                    >
-                      <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#C41E3A]" />
-                      <span>{item}</span>
+                      {product.note && (
+                        <div className="mt-1 text-xs text-slate-400">
+                          {product.note}
+                        </div>
+                      )}
                     </div>
-                  ))}
-
-              {displayedProducts.length === 0 && (
-                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400">
-                  产品清单正在建设中
+                  </Link>
+                  );
+                })
+              ) : (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
+                  <div className="text-sm font-bold text-slate-500">
+                    当前暂无专项现有产品
+                  </div>
+                  <div className="mt-2 text-xs leading-5 text-slate-400">
+                    保留产业资源关联能力，不以规划产品冒充现有产品。
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* 应用场景 */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-xl font-black text-slate-900">
-              典型应用场景
-            </h2>
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="mb-5">
+              <h2 className="text-xl font-black text-slate-900">
+                可拓展应用场景
+              </h2>
+              <p className="mt-1 text-xs text-slate-400">
+                以下为基于现有数据资源形成的产业赋能方向，不等同于已上线产品。
+              </p>
+            </div>
 
             <div className="space-y-3">
-              {industry.scenarios.map((item) => (
+              {(industry.scenarios ?? []).map((scenario, index) => (
                 <div
-                  key={item}
-                  className="flex items-start gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700"
+                  key={scenario}
+                  className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3.5"
                 >
-                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#C41E3A]" />
-                  <span>{item}</span>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-black text-[#C41E3A] shadow-sm">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">
+                    {scenario}
+                  </span>
                 </div>
               ))}
-
-              {industry.scenarios.length === 0 && (
-                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-400">
-                  应用场景正在建设中
-                </div>
-              )}
             </div>
           </div>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-red-100 bg-red-50/40 p-6">
+          <p className="text-sm leading-7 text-slate-600">
+            <span className="font-bold text-[#C41E3A]">说明：</span>
+            本页采用“产业—现有数据资源—现有产品—可拓展场景”的映射关系。
+            “关联数据资源”和“现有数据产品”均以当前数据地图已有内容为基础；
+            “可拓展应用场景”仅表示数据赋能方向，不代表已经形成或上线对应产品。
+          </p>
         </section>
       </div>
     </main>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Building2,
@@ -17,7 +17,7 @@ import {
   authorizedResourceSummary,
 } from "@/data/authorizedResources";
 
-const PUBLIC_PRODUCT_SERVICE_COUNT = 58;
+const PUBLIC_PRODUCT_SERVICE_COUNT = 59;
 const MINISTRY_PRODUCT_COUNT = 9;
 
 const ministryCatalogs = [
@@ -40,7 +40,7 @@ const ministryCatalogs = [
       "覆盖养老机构、社会组织、婚姻登记、社会救助等民政领域数据资源。",
     tags: ["养老服务", "社会组织", "民政治理"],
     stats: ["目录建设中"],
-    status: "持续建设",
+    status: "已接入",
     href: "/data-catalog/civil",
   },
   {
@@ -51,8 +51,8 @@ const ministryCatalogs = [
       "覆盖医疗健康、居民健康管理、诊疗服务、疾病防控等领域数据资源。",
     tags: ["居民健康", "诊疗服务", "疾病防控"],
     stats: ["目录建设中"],
-    status: "持续建设",
-    href: "/authorized-resources/medical-health",
+    status: "未接入",
+    href: "/data-catalog#ministry-catalog",
   },
   {
     id: "medical-insurance-ministry",
@@ -62,19 +62,19 @@ const ministryCatalogs = [
       "覆盖医保目录、医保结算、医保费用、药品耗材及医保追溯等数据资源。",
     tags: ["医保目录", "医保结算", "药品耗材"],
     stats: ["目录建设中"],
-    status: "持续建设",
-    href: "/authorized-resources/medical-health",
+    status: "未接入",
+    href: "/data-catalog#ministry-catalog",
   },
   {
     id: "public-security-ministry",
     name: "公安部",
     shortName: "公安",
     description:
-      "覆盖机动车登记、驾驶证、交通违法、车辆过户和车辆抵押等公安交管数据资源。",
-    tags: ["机动车", "交通违法", "车辆登记"],
-    stats: ["目录建设中"],
-    status: "持续建设",
-    href: "/authorized-resources",
+      "依托国家网络身份认证公共服务二级接入平台（北京数据集团节点），当前已接入两项身份核验数据资源。",
+    tags: ["网证数据核验", "第三方身份核验"],
+    stats: ["2项数据资源"],
+    status: "已接入",
+    href: "/data-catalog#ministry-catalog",
   },
   {
     id: "education-ministry",
@@ -84,7 +84,7 @@ const ministryCatalogs = [
       "覆盖基础教育课程、课标、考点、知识点及教育行业大模型基础数据资源。",
     tags: ["教育教学", "课标资源", "教育大模型"],
     stats: ["目录建设中"],
-    status: "持续建设",
+    status: "已接入",
     href: "/data-catalog/education",
   },
 ];
@@ -92,6 +92,28 @@ const ministryCatalogs = [
 export default function DataCatalogPage() {
   const [keyword, setKeyword] = useState("");
   const [selectedDomain, setSelectedDomain] = useState("all");
+
+  useEffect(() => {
+    const domainId = new URLSearchParams(window.location.search).get("domain");
+
+    if (
+      domainId &&
+      authorizedResourceDomains.some((domain) => domain.id === domainId)
+    ) {
+      setSelectedDomain(domainId);
+    }
+  }, []);
+
+  const changeDomain = (domainId: string) => {
+    setSelectedDomain(domainId);
+
+    const nextUrl =
+      domainId === "all"
+        ? "/data-catalog#public-catalog"
+        : `/data-catalog?domain=${domainId}#public-catalog`;
+
+    window.history.replaceState(null, "", nextUrl);
+  };
 
   const publicCatalogItems = useMemo(() => {
     return authorizedResourceDomains.flatMap((domain) =>
@@ -218,7 +240,7 @@ export default function DataCatalogPage() {
         </section>
 
         {/* 北京市公共数据目录 */}
-        <section className="mb-14">
+        <section id="public-catalog" className="mb-14 scroll-mt-28">
           <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
@@ -263,7 +285,7 @@ export default function DataCatalogPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => setSelectedDomain("all")}
+                  onClick={() => changeDomain("all")}
                   className={[
                     "rounded-full px-4 py-2 text-sm font-bold transition",
                     selectedDomain === "all"
@@ -278,7 +300,7 @@ export default function DataCatalogPage() {
                   <button
                     key={domain.id}
                     type="button"
-                    onClick={() => setSelectedDomain(domain.id)}
+                    onClick={() => changeDomain(domain.id)}
                     className={[
                       "rounded-full px-4 py-2 text-sm font-bold transition",
                       selectedDomain === domain.id
@@ -320,7 +342,7 @@ export default function DataCatalogPage() {
                 type="button"
                 onClick={() => {
                   setKeyword("");
-                  setSelectedDomain("all");
+                  changeDomain("all");
                 }}
                 className="w-fit text-sm font-bold text-[#C41E3A]"
               >
@@ -457,74 +479,119 @@ export default function DataCatalogPage() {
             </h2>
 
             <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-500">
-              集中展示已纳入数据地图的国家部委数据来源。当前覆盖交通运输部、民政部、
-              国家卫生健康委、国家医疗保障局、公安部和教育部，不包含市场监管总局。
+              集中展示国家部委数据资源接入情况。当前交通运输部、民政部、教育部、公安部已接入，
+              国家卫生健康委、国家医疗保障局暂未接入。
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {ministryCatalogs.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="group flex min-h-[310px] flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_14px_32px_rgba(196,30,58,0.08)]"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-sm font-black text-[#C41E3A] transition group-hover:bg-[#C41E3A] group-hover:text-white">
-                    <Building2 className="h-5 w-5" />
+            {ministryCatalogs.map((item) => {
+              const hasDetailPage = [
+                "transport-ministry",
+                "civil-ministry",
+                "education-ministry",
+              ].includes(item.id);
+
+              const cardContent = (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-sm font-black text-[#C41E3A] transition ${
+                        hasDetailPage
+                          ? "group-hover:bg-[#C41E3A] group-hover:text-white"
+                          : ""
+                      }`}
+                    >
+                      <Building2 className="h-5 w-5" />
+                    </div>
+
+                    <span
+                      className={[
+                        "rounded-full px-3 py-1 text-xs font-bold",
+                        item.status === "已接入"
+                          ? "bg-red-50 text-[#C41E3A]"
+                          : "bg-slate-100 text-slate-500",
+                      ].join(" ")}
+                    >
+                      {item.status}
+                    </span>
                   </div>
 
-                  <span
-                    className={[
-                      "rounded-full px-3 py-1 text-xs font-bold",
-                      item.status === "已接入"
-                        ? "bg-red-50 text-[#C41E3A]"
-                        : "bg-amber-50 text-amber-700",
-                    ].join(" ")}
+                  <h3
+                    className={`mt-5 text-xl font-black text-slate-900 transition ${
+                      hasDetailPage ? "group-hover:text-[#C41E3A]" : ""
+                    }`}
                   >
-                    {item.status}
-                  </span>
-                </div>
+                    {item.name}
+                  </h3>
 
-                <h3 className="mt-5 text-xl font-black text-slate-900 transition group-hover:text-[#C41E3A]">
-                  {item.name}
-                </h3>
+                  <p className="mt-3 min-h-[72px] text-sm leading-7 text-slate-500">
+                    {item.description}
+                  </p>
 
-                <p className="mt-3 min-h-[72px] text-sm leading-7 text-slate-500">
-                  {item.description}
-                </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
 
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {item.tags.map((tag) => (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {item.stats.map((stat) => (
+                      <span
+                        key={stat}
+                        className={`rounded-md px-2.5 py-1 text-xs font-bold ${
+                          item.status === "已接入"
+                            ? "bg-red-50 text-[#C41E3A]"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
+                      >
+                        {stat}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
                     <span
-                      key={tag}
-                      className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                      className={`text-sm font-bold ${
+                        hasDetailPage ? "text-[#C41E3A]" : "text-slate-400"
+                      }`}
                     >
-                      {tag}
+                      {item.id === "public-security-ministry"
+                        ? "当前已接入2项资源"
+                        : item.status === "未接入"
+                        ? "暂未接入"
+                        : "查看相关目录"}
                     </span>
-                  ))}
-                </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {item.stats.map((stat) => (
-                    <span
-                      key={stat}
-                      className="rounded-md bg-red-50 px-2.5 py-1 text-xs font-bold text-[#C41E3A]"
-                    >
-                      {stat}
-                    </span>
-                  ))}
-                </div>
+                    {hasDetailPage && (
+                      <ArrowRight className="h-4 w-4 text-[#C41E3A] transition group-hover:translate-x-1" />
+                    )}
+                  </div>
+                </>
+              );
 
-                <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
-                  <span className="text-sm font-bold text-[#C41E3A]">
-                    查看相关目录
-                  </span>
-
-                  <ArrowRight className="h-4 w-4 text-[#C41E3A] transition group-hover:translate-x-1" />
+              return hasDetailPage ? (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className="group flex min-h-[310px] flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_14px_32px_rgba(196,30,58,0.08)]"
+                >
+                  {cardContent}
+                </Link>
+              ) : (
+                <div
+                  key={item.id}
+                  className="flex min-h-[310px] flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm"
+                >
+                  {cardContent}
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </section>
       </div>

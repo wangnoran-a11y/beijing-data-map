@@ -162,7 +162,7 @@ export default function AuthorizedResourcesPage() {
                 {/* 查看入口 */}
                 <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
                   <span className="text-sm font-bold text-[#C41E3A]">
-                    查看资源详情
+                    查看领域详情
                   </span>
 
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 font-bold text-[#C41E3A] transition-all group-hover:translate-x-1 group-hover:bg-[#C41E3A] group-hover:text-white">

@@ -37,7 +37,7 @@ export const industries: IndustryItem[] = [
         name: "市场主体监管数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/financial-services/market-supervision",
+        href: "/authorized-resources/financial-services/market-entity",
       },
       {
         name: "信用评价数据",
@@ -55,7 +55,7 @@ export const industries: IndustryItem[] = [
         name: "人才职业技能",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/education/talent-skill",
+        href: "/authorized-resources/education/vocational-skills",
       },
       {
         name: "项目申报信息",
@@ -125,13 +125,13 @@ export const industries: IndustryItem[] = [
         name: "检验检查与医学影像数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/medical-health/medical-examination",
+        href: "/authorized-resources/medical-health/examination-imaging",
       },
       {
         name: "医药耗材与许可备案数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/medical-health/medicine-material",
+        href: "/authorized-resources/medical-health/medical-material-license",
       },
       {
         name: "医疗执业与注册登记数据",
@@ -155,13 +155,13 @@ export const industries: IndustryItem[] = [
         name: "医疗机构运营与科研数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/medical-health/medical-operation",
+        href: "/authorized-resources/medical-health/medical-operation-research",
       },
       {
         name: "公共人口服务",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/medical-health/population-service",
+        href: "/authorized-resources/medical-health/public-population",
       },
       {
         name: "民政部养老机构信息",
@@ -213,7 +213,7 @@ export const industries: IndustryItem[] = [
         name: "驾驶员管理数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/transportation/driver-management",
+        href: "/authorized-resources/transportation/driver",
       },
       {
         name: "交通执法监管数据",
@@ -225,7 +225,7 @@ export const industries: IndustryItem[] = [
         name: "静态停车管理数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/transportation/parking-management",
+        href: "/authorized-resources/transportation/parking",
       },
       {
         name: "汽车维修电子健康档案",
@@ -282,7 +282,7 @@ export const industries: IndustryItem[] = [
         name: "市场主体监管数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/financial-services/market-supervision",
+        href: "/authorized-resources/financial-services/market-entity",
       },
       {
         name: "信用评价数据",
@@ -348,7 +348,7 @@ export const industries: IndustryItem[] = [
         name: "市场主体监管数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/financial-services/market-supervision",
+        href: "/authorized-resources/financial-services/market-entity",
       },
       {
         name: "知识产权",
@@ -426,7 +426,7 @@ export const industries: IndustryItem[] = [
         name: "供电供水信息",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/green-low-carbon/water-power",
+        href: "/authorized-resources/green-low-carbon/power-water",
       },
       {
         name: "道路车辆管理数据",
@@ -439,7 +439,7 @@ export const industries: IndustryItem[] = [
         name: "市场主体监管数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/financial-services/market-supervision",
+        href: "/authorized-resources/financial-services/market-entity",
       },
       {
         name: "安全生产监管数据",
@@ -488,13 +488,13 @@ export const industries: IndustryItem[] = [
         name: "驾驶员管理数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/transportation/driver-management",
+        href: "/authorized-resources/transportation/driver",
       },
       {
         name: "静态停车管理数据",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/transportation/parking-management",
+        href: "/authorized-resources/transportation/parking",
       },
       {
         name: "交通执法监管数据",
@@ -578,13 +578,13 @@ export const industries: IndustryItem[] = [
         name: "公共人口服务",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/medical-health/population-service",
+        href: "/authorized-resources/medical-health/public-population",
       },
       {
         name: "市场运行监测",
         source: "北京市公共数据",
         sourceType: "北京市公共数据",
-        href: "/authorized-resources/government-services/market-operation-monitoring",
+        href: "/authorized-resources/government-services/market-monitoring",
       },
       {
         name: "网证数据核验",

@@ -19,13 +19,13 @@ const navItems = [
 const resourceNavItems = [
   {
     name: "数据资源体系",
-    description: "查看北京市公共数据、国家部委数据及重点资源布局",
+    description: "查看北京市公共数据、国家部委数据及境外企业数据资源布局",
     href: "/data-resources",
     icon: "database",
   },
   {
     name: "首批授权资源",
-    description: "查看首批授权运营范围内的8个领域、29类公共数据资源",
+    description: "查看首批授权运营范围内的9个领域、47类公共数据资源",
     href: "/authorized-resources",
     icon: "shield",
   },

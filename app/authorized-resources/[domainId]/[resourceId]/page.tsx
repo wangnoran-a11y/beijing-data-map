@@ -177,7 +177,7 @@ export default async function AuthorizedResourceDetailPage({
             href={`/authorized-resources/${domain.id}`}
             className="mt-5 flex h-11 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-sm font-bold text-[#C41E3A] transition hover:border-[#C41E3A] hover:bg-[#C41E3A] hover:text-white"
           >
-            返回{domain.name}资源
+            返回{domain.name}领域
           </Link>
         </aside>
       </section>

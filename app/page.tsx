@@ -13,6 +13,7 @@ import {
   Database,
   Factory,
   FileText,
+  Globe2,
   Layers,
   Package,
   ShieldCheck,
@@ -30,13 +31,37 @@ const beijingSources = [
 ];
 
 const ministrySources = [
-  "交通运输部",
-  "民政部",
-  "教育部",
-  "国家卫生健康委员会",
-  "国家医疗保障局",
-  "公安部",
+  { name: "交通运输部", connected: true },
+  { name: "民政部", connected: true },
+  { name: "教育部", connected: true },
+  {
+    name: "公安部",
+    connected: true,
+    resources: ["网证数据核验", "第三方身份核验"],
+  },
+  { name: "国家卫生健康委员会", connected: false },
+  { name: "国家医疗保障局", connected: false },
 ];
+
+const overseasData = {
+  title: "境外企业数据资源",
+  subtitle: "欧洲企业信息与信用数据",
+  description:
+    "储备欧洲企业多维信息资源，覆盖企业基础信息、股权治理、经营信息、财务信息、信用风险及知识产权等数据。",
+  stats: [
+    { value: "8000万+", label: "企业主体" },
+    { value: "13亿+", label: "数据记录" },
+    { value: "欧洲", label: "重点区域" },
+  ],
+  tags: [
+    "企业基础信息",
+    "股权治理",
+    "经营信息",
+    "财务信息",
+    "信用风险",
+    "知识产权",
+  ],
+};
 
 const projects = [
   {
@@ -50,7 +75,7 @@ const projects = [
     title: "公共数据授权运营",
     tag: "北京市",
     desc: "围绕首批公共数据资源，推进资源分类、场景建设和产品服务清单完善。",
-    stats: ["8个领域", "29类资源"],
+    stats: ["9个领域", "47类资源"],
     href: "/authorized-resources",
   },
   {
@@ -81,25 +106,25 @@ const products = [
 ];
 
 const industries = [
-  "集成电路",
-  "人工智能",
+  "新一代信息技术",
   "医药健康",
   "智能网联汽车",
-  "新能源与储能",
-  "商业航天与低空经济",
-  "新材料",
-  "数字经济与现代服务业",
+  "集成电路",
+  "高端装备",
+  "新能源与节能环保",
+  "现代物流",
+  "消费与生活服务",
 ];
 
 const industryLinks: Record<string, string> = {
-  集成电路: "ic",
-  人工智能: "ai",
+  新一代信息技术: "information",
   医药健康: "health",
   智能网联汽车: "auto",
-  新能源与储能: "energy",
-  商业航天与低空经济: "space",
-  新材料: "material",
-  数字经济与现代服务业: "digital",
+  集成电路: "ic",
+  高端装备: "equipment",
+  新能源与节能环保: "energy",
+  现代物流: "logistics",
+  消费与生活服务: "consumption",
 };
 
 export default function Home() {
@@ -209,74 +234,232 @@ export default function Home() {
                 数据资源来源
               </h2>
               <p className="mt-3 text-slate-500">
-                汇聚北京市公共数据资源、国家部委数据资源及重点行业数据资源，形成统一资源视图。
+                汇聚北京市公共数据资源、国家部委数据资源及境外企业数据资源，形成统一资源视图。
               </p>
             </div>
 
             <Link
               href="/data-catalog"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#C41E3A] shadow-sm"
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-red-200 bg-[#C41E3A] px-5 py-2.5 text-sm font-bold text-white shadow-[0_5px_14px_rgba(196,30,58,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#B51B35] hover:shadow-[0_8px_18px_rgba(196,30,58,0.22)]"
             >
               查看数据目录
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-[28px] bg-white p-7 shadow-sm">
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
-                  <Building2 className="h-6 w-6 text-[#C41E3A]" />
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* 北京市公共数据 */}
+            <div className="flex min-h-[470px] flex-col rounded-[28px] border border-slate-100 bg-white p-7 shadow-sm">
+              <div className="flex min-h-[78px] items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50">
+                    <Building2 className="h-6 w-6 text-[#C41E3A]" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#C41E3A]">市级公共数据</div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">北京市公共数据目录</h3>
+                    <p className="mt-1 text-sm text-slate-500">已接入重点市级部门公共数据资源</p>
+                  </div>
                 </div>
-
-                <div>
-                  <h3 className="text-xl font-black text-slate-900">
-                    北京市公共数据目录
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-500">
-                    已接入重点市级部门数据资源
-                  </p>
-                </div>
+                <span className="shrink-0 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
+                  已接入
+                </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                {beijingSources.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700"
-                  >
-                    {item}
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                {[
+                  ["8", "重点部门"],
+                  [String(authorizedResourceSummary.domainCount), "授权领域"],
+                  [String(authorizedResourceSummary.resourceCount), "资源分类"],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
+                    <div className="whitespace-nowrap text-[24px] leading-none font-black text-[#C41E3A]">{value}</div>
+                    <div className="mt-1 text-xs text-slate-500">{label}</div>
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 border-t border-slate-100 pt-5">
+                <div className="mb-3 text-xs font-bold text-slate-400">已接入重点部门</div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {beijingSources.map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-xl bg-slate-50 px-3.5 py-2.5 text-sm font-bold text-slate-700"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                href="/authorized-resources"
+                className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5 text-sm font-bold text-[#C41E3A]"
+              >
+                查看首批授权资源
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
 
-            <div className="rounded-[28px] bg-white p-7 shadow-sm">
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
-                  <Database className="h-6 w-6 text-[#C41E3A]" />
+            {/* 国家部委数据 */}
+            <div className="flex min-h-[470px] flex-col rounded-[28px] border border-slate-100 bg-white p-7 shadow-sm">
+              <div className="flex min-h-[78px] items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50">
+                    <Database className="h-6 w-6 text-[#C41E3A]" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#C41E3A]">部委行业数据</div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">国家部委数据目录</h3>
+                    <p className="mt-1 text-sm text-slate-500">持续推进重点部委数据资源接入</p>
+                  </div>
                 </div>
-
-                <div>
-                  <h3 className="text-xl font-black text-slate-900">
-                    国家部委数据目录
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-500">
-                    已接入国家部委重点数据资源
-                  </p>
-                </div>
+                <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-600">
+                  持续接入
+                </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                {ministrySources.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700"
-                  >
-                    {item}
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                {[
+                  ["6", "部委来源"],
+                  ["4", "已接入"],
+                  ["2", "未接入"],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
+                    <div className="whitespace-nowrap text-[24px] leading-none font-black text-[#C41E3A]">{value}</div>
+                    <div className="mt-1 text-xs text-slate-500">{label}</div>
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 border-t border-slate-100 pt-5">
+                <div className="mb-3 text-xs font-bold text-slate-400">部委接入情况</div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {ministrySources.map((item) =>
+                    item.name === "公安部" ? (
+                      <details
+                        key={item.name}
+                        className="group rounded-xl bg-slate-50 px-3.5 py-2.5 open:ring-1 open:ring-red-100"
+                      >
+                        <summary className="flex min-h-[22px] cursor-pointer list-none items-center justify-between gap-2">
+                          <span className="min-w-0 text-sm font-bold text-slate-700">
+                            {item.name}
+                          </span>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-bold text-[#C41E3A]">
+                              已接入
+                            </span>
+                            <span className="text-xs text-slate-400 transition group-open:rotate-180">
+                              ▾
+                            </span>
+                          </div>
+                        </summary>
+
+                        <div className="mt-2 border-t border-slate-200 pt-2">
+                          <div className="mb-1.5 text-[10px] font-bold text-slate-400">
+                            已接入2项资源
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {item.resources?.map((resource) => (
+                              <span
+                                key={resource}
+                                className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-slate-600"
+                              >
+                                {resource}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </details>
+                    ) : (
+                      <div
+                        key={item.name}
+                        className="flex min-h-[42px] items-center justify-between gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5"
+                      >
+                        <span className="min-w-0 text-sm font-bold text-slate-700">
+                          {item.name}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${
+                            item.connected
+                              ? "bg-red-50 text-[#C41E3A]"
+                              : "bg-slate-200 text-slate-500"
+                          }`}
+                        >
+                          {item.connected ? "已接入" : "未接入"}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <Link
+                href="/data-catalog#ministry-catalog"
+                className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5 text-sm font-bold text-[#C41E3A]"
+              >
+                查看部委数据
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* 境外企业数据 */}
+            <div className="flex min-h-[470px] flex-col rounded-[28px] border border-slate-100 bg-white p-7 shadow-sm">
+              <div className="flex min-h-[78px] items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50">
+                    <Globe2 className="h-6 w-6 text-[#C41E3A]" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#C41E3A]">境外企业数据</div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">境外企业数据资源</h3>
+                    <p className="mt-1 text-sm text-slate-500">欧洲企业信息与信用数据</p>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500">
+                  储备待接入
+                </span>
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                {overseasData.stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl bg-slate-50 px-3 py-4 text-center"
+                  >
+                    <div className="whitespace-nowrap text-[18px] leading-none font-black text-[#C41E3A]">
+                      {stat.value}
+                    </div>
+                    <div className="mt-2 text-xs text-slate-500">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 border-t border-slate-100 pt-5">
+                <div className="mb-3 text-xs font-bold text-slate-400">主要数据能力</div>
+                <p className="text-sm leading-6 text-slate-500">
+                  储备欧洲企业多维信息资源，覆盖企业主体、治理、经营、财务及信用风险等企业信息。
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {overseasData.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                href="/overseas-resources"
+                className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5 text-sm font-bold text-[#C41E3A]"
+              >
+                查看境外企业数据概况
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
@@ -294,7 +477,7 @@ export default function Home() {
 
             <Link
               href="/data-products"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#C41E3A] shadow-sm"
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-red-200 bg-[#C41E3A] px-5 py-2.5 text-sm font-bold text-white shadow-[0_5px_14px_rgba(196,30,58,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#B51B35] hover:shadow-[0_8px_18px_rgba(196,30,58,0.22)]"
             >
               查看数据产品
               <ArrowRight className="h-4 w-4" />
@@ -389,7 +572,7 @@ export default function Home() {
 
             <Link
               href="/industry"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#C41E3A] shadow-sm"
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-red-200 bg-[#C41E3A] px-5 py-2.5 text-sm font-bold text-white shadow-[0_5px_14px_rgba(196,30,58,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#B51B35] hover:shadow-[0_8px_18px_rgba(196,30,58,0.22)]"
             >
               查看产业地图
               <ArrowRight className="h-4 w-4" />
