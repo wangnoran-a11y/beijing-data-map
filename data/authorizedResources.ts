@@ -63,4 +63,12 @@ export const authorizedResourceDomains: AuthorizedResourceDomain[] = [
 ];
 export const authorizedResourceSummary={domainCount:authorizedResourceDomains.length,resourceCount:authorizedResourceDomains.reduce((t,d)=>t+d.resources.length,0)};
 export function getAuthorizedDomainById(id:string){return authorizedResourceDomains.find(d=>d.id===id)}
-export function getAuthorizedResourceById(domainId:string,resourceId:string){return getAuthorizedDomainById(domainId)?.resources.find(r=>r.id===resourceId)}
+export function getAuthorizedResourceById(domainId: string, resourceId: string) {
+  const domain = getAuthorizedDomainById(domainId);
+  if (!domain) return undefined;
+
+  const resource = domain.resources.find((item) => item.id === resourceId);
+  if (!resource) return undefined;
+
+  return { domain, resource };
+}
