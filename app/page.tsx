@@ -1,4 +1,3 @@
-import { authorizedProductSummary } from "@/data/authorizedProducts";
 import Link from "next/link";
 import LoginGate from "@/components/LoginGate";
 import Header from "@/components/Header";
@@ -75,8 +74,8 @@ const projects = [
   {
     title: "公共数据授权运营",
     tag: "北京市",
-    desc: "依据0812最新实施方案，展示9个授权领域、40类资源及69项应用场景。",
-    stats: ["9个领域", "47类资源"],
+    desc: "围绕首批公共数据资源，推进资源分类、场景建设和产品服务清单完善。",
+    stats: ["9个领域", "40类资源"],
     href: "/authorized-resources",
   },
   {
@@ -96,14 +95,54 @@ const projects = [
 ];
 
 const products = [
-  "车维全景动察-01—08",
-  "车辆健康评分",
-  "企业授信调查报告",
-  "养老机构风险评级",
-  "医保基础画像",
-  "自动驾驶脱敏数据集",
-  "碳排放智能核算",
-  "企业经营风险评估",
+  {
+    title: "车维全景动察-01",
+    subtitle: "维修总次数",
+    source: "交通运输部",
+    status: "已上线",
+  },
+  {
+    title: "车维全景动察-02",
+    subtitle: "结算时间",
+    source: "交通运输部",
+    status: "已上线",
+  },
+  {
+    title: "企业尽调研究",
+    subtitle: "企业年报、税收、股东等数据服务",
+    source: "首批授权运营",
+    status: "首批授权",
+  },
+  {
+    title: "医保大数据反欺诈",
+    subtitle: "商保核保理赔场景",
+    source: "首批授权运营",
+    status: "首批授权",
+  },
+  {
+    title: "车维全景动察-03",
+    subtitle: "维修里程",
+    source: "交通运输部",
+    status: "已上线",
+  },
+  {
+    title: "车维全景动察-04",
+    subtitle: "维修故障情况",
+    source: "交通运输部",
+    status: "开发中",
+  },
+  {
+    title: "碳排放监测分析",
+    subtitle: "碳排放核算与减排分析",
+    source: "首批授权运营",
+    status: "首批授权",
+  },
+  {
+    title: "企业经营发展监测",
+    subtitle: "重点区域企业画像与资质画像",
+    source: "首批授权运营",
+    status: "首批授权",
+  },
 ];
 
 const industries = [
@@ -204,13 +243,13 @@ export default function Home() {
                 <div className="rounded-2xl bg-slate-50 p-5">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
                     <Package className="h-5 w-5 text-[#C41E3A]" />
-                    首批应用场景
+                    数据产品
                   </div>
                   <div className="mt-2 text-3xl font-black text-[#C41E3A]">
-                    {authorizedProductSummary.scenarioCount}
+                    {dataCatalogSummary.productCount}
                   </div>
                   <div className="mt-1 text-xs text-slate-400">
-                    0812最新授权运营清单
+                    已纳入目录的数据产品
                   </div>
                 </div>
 
@@ -472,7 +511,7 @@ export default function Home() {
                 数据产品成果
               </h2>
               <p className="mt-3 text-slate-500">
-                面向金融、交通、医疗、民政、双碳等场景形成可运营产品服务。
+                汇总展示首批授权运营、国家部委及其他已形成的数据产品和服务。
               </p>
             </div>
 
@@ -480,19 +519,46 @@ export default function Home() {
               href="/data-products"
               className="inline-flex w-fit items-center gap-2 rounded-full border border-red-200 bg-[#C41E3A] px-5 py-2.5 text-sm font-bold text-white shadow-[0_5px_14px_rgba(196,30,58,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#B51B35] hover:shadow-[0_8px_18px_rgba(196,30,58,0.22)]"
             >
-              查看数据产品
+              查看全部产品
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           <div className="grid gap-4 md:grid-cols-4">
             {products.map((item) => (
-              <div key={item} className="rounded-3xl bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50">
-                  <FileText className="h-5 w-5 text-[#C41E3A]" />
+              <Link
+                key={`${item.source}-${item.title}`}
+                href="/data-products"
+                className="group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
+              >
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50">
+                    <FileText className="h-5 w-5 text-[#C41E3A]" />
+                  </div>
+
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                      item.status === "已上线"
+                        ? "bg-red-50 text-[#C41E3A]"
+                        : item.status === "开发中"
+                        ? "bg-blue-50 text-blue-700"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {item.status}
+                  </span>
                 </div>
-                <div className="font-black text-slate-900">{item}</div>
-              </div>
+
+                <div className="text-xs font-bold text-slate-400">
+                  {item.source}
+                </div>
+                <div className="mt-2 font-black text-slate-900 transition group-hover:text-[#C41E3A]">
+                  {item.title}
+                </div>
+                <div className="mt-2 text-xs leading-5 text-slate-500">
+                  {item.subtitle}
+                </div>
+              </Link>
             ))}
           </div>
         </section>

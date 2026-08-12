@@ -16,8 +16,9 @@ import {
   authorizedResourceDomains,
   authorizedResourceSummary,
 } from "@/data/authorizedResources";
+import { authorizedProductSummary } from "@/data/authorizedProducts";
 
-const PUBLIC_PRODUCT_SERVICE_COUNT = 59;
+const PUBLIC_PRODUCT_SERVICE_COUNT = authorizedProductSummary.serviceCount;
 const MINISTRY_PRODUCT_COUNT = 9;
 
 const ministryCatalogs = [
