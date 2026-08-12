@@ -1,3 +1,4 @@
+import { authorizedProductSummary } from "@/data/authorizedProducts";
 import Link from "next/link";
 import LoginGate from "@/components/LoginGate";
 import Header from "@/components/Header";
@@ -74,7 +75,7 @@ const projects = [
   {
     title: "公共数据授权运营",
     tag: "北京市",
-    desc: "围绕首批公共数据资源，推进资源分类、场景建设和产品服务清单完善。",
+    desc: "依据0812最新实施方案，展示9个授权领域、40类资源及69项应用场景。",
     stats: ["9个领域", "47类资源"],
     href: "/authorized-resources",
   },
@@ -203,13 +204,13 @@ export default function Home() {
                 <div className="rounded-2xl bg-slate-50 p-5">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
                     <Package className="h-5 w-5 text-[#C41E3A]" />
-                    数据产品
+                    首批应用场景
                   </div>
                   <div className="mt-2 text-3xl font-black text-[#C41E3A]">
-                    {dataCatalogSummary.productCount}
+                    {authorizedProductSummary.scenarioCount}
                   </div>
                   <div className="mt-1 text-xs text-slate-400">
-                    已纳入目录的数据产品
+                    0812最新授权运营清单
                   </div>
                 </div>
 

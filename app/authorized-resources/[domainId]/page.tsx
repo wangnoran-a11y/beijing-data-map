@@ -189,7 +189,7 @@ export default async function AuthorizedDomainDetailPage({
                 {domain.name}产品和服务清单
               </h2>
               <p className="mt-2 text-sm text-slate-500">
-                按0804版首批清单展示本领域对应的应用场景及产品和服务。
+                依据0812最新《实施方案》附件1-2，展示本领域应用场景、产品和服务、用途及服务方式。
               </p>
             </div>
 
@@ -222,6 +222,13 @@ export default async function AuthorizedDomainDetailPage({
                         </span>
                       </div>
 
+                      <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold">
+                        <span className="rounded-full bg-red-50 px-3 py-1.5 text-[#C41E3A]">{scenario.purpose}</span>
+                        {scenario.serviceMethods.map((method) => (
+                          <span key={method} className="rounded-full bg-slate-100 px-3 py-1.5 text-slate-500">{method}</span>
+                        ))}
+                      </div>
+
                       <div className="mt-4 flex flex-wrap gap-2">
                         {scenario.services.map((service) => (
                           <span
@@ -243,8 +250,7 @@ export default async function AuthorizedDomainDetailPage({
                 当前版本暂未列示具体产品和服务
               </div>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-                0804版《拟提供的首批公共数据产品和服务清单》中，
-                暂未列示{domain.name}领域具体产品和服务，后续可随最新版清单持续补充。
+                0812最新《实施方案》附件1-2暂未列示{domain.name}领域具体产品和服务。
               </p>
             </div>
           )}
