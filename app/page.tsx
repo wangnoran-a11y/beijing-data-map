@@ -182,7 +182,7 @@ export default function Home() {
               </div>
 
               <h1 className="max-w-4xl text-[52px] font-black leading-tight text-slate-900">
-                汇聚公共数据资源，
+                汇聚数据资源，
                 <br />
                 形成产品能力，赋能重点产业。
               </h1>
