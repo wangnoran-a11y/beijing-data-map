@@ -9,6 +9,7 @@ import {
   Package,
   Search,
   ShieldCheck,
+  Sparkles,
   Table2,
 } from "lucide-react";
 import { dataCatalog } from "@/data/dataMapCatalog";
@@ -26,12 +27,191 @@ type SearchResult = {
   priority: number;
 };
 
+type SearchIntent = {
+  industry: string;
+  scenario: string;
+  dataNeeds: string[];
+  terms: string[];
+  summary: string;
+};
+
+const intentRules: Array<{
+  keywords: string[];
+  intent: SearchIntent;
+}> = [
+  {
+    keywords: ["企业", "公司", "经营", "授信", "融资", "贷款", "尽调", "信用", "风险"],
+    intent: {
+      industry: "金融服务",
+      scenario: "企业尽调与经营风险识别",
+      dataNeeds: ["企业登记", "经营信息", "纳税信息", "司法风险", "信用信息"],
+      terms: ["企业", "公司", "经营", "授信", "融资", "贷款", "尽调", "信用", "风险", "税务", "司法"],
+      summary: "围绕企业主体真实性、经营活跃度和风险情况，组合推荐相关数据资源。",
+    },
+  },
+  {
+    keywords: ["医疗", "医保", "就医", "看病", "医院", "健康", "医药", "医疗保险", "健康险"],
+    intent: {
+      industry: "医药健康",
+      scenario: "医疗服务与医保风险分析",
+      dataNeeds: ["医疗机构", "医保结算", "诊疗信息", "药品耗材", "健康服务"],
+      terms: ["医疗", "医保", "诊疗", "医院", "健康", "药品", "结算", "理赔"],
+      summary: "围绕医疗服务、医保结算和健康管理，推荐可支撑业务分析的数据资源。",
+    },
+  },
+  {
+    keywords: [
+      "交通",
+      "车辆",
+      "汽车",
+      "车",
+      "一辆车",
+      "车保险",
+      "维修",
+      "车险",
+      "二手车",
+      "营运",
+    ],
+    intent: {
+      industry: "智能网联汽车",
+      scenario: "车辆状态与维修风险分析",
+      dataNeeds: ["车辆基础信息", "维修记录", "故障信息", "配件工时", "营运属性"],
+      terms: [
+        "交通",
+        "车辆",
+        "汽车",
+        "维修",
+        "故障",
+        "配件",
+        "营运",
+        "车险",
+        "保险",
+        "核保",
+        "理赔",
+        "车辆健康评分",
+      ],
+      summary: "围绕车辆使用、维修和风险判断，推荐汽车全生命周期相关数据资源。",
+    },
+  },
+  {
+    keywords: ["养老", "老人", "老年", "民政"],
+    intent: {
+      industry: "养老服务",
+      scenario: "养老机构与养老金融服务",
+      dataNeeds: ["养老机构", "服务能力", "信用信息", "补贴信息", "健康服务"],
+      terms: ["养老", "老年", "民政", "机构", "信用", "健康"],
+      summary: "围绕养老机构评价、服务供给和养老金融，推荐相关公共数据资源。",
+    },
+  },
+];
+
+const conceptGroups = [
+  ["企业", "公司", "工商", "法人", "主体", "商户"],
+  ["经营", "运营", "营收", "收入", "发展", "稳定性", "活跃度"],
+  ["风险", "异常", "失信", "处罚", "司法", "诉讼"],
+  ["授信", "融资", "贷款", "信贷", "担保", "信用"],
+  ["尽调", "调查", "核验", "审查", "背景调查"],
+  ["交通", "出行", "运输", "道路", "营运"],
+  ["车辆", "汽车", "车", "机动车", "二手车"],
+  ["维修", "维保", "修理", "保养"],
+  ["故障", "损坏", "泡水", "火烧", "事故"],
+  ["保险", "车险", "保单", "核保", "承保", "理赔"],
+  ["医疗", "就医", "看病", "诊疗", "医院", "医疗机构"],
+  ["医保", "医疗保险", "结算", "报销"],
+  ["健康", "体检", "疾病", "病", "康养"],
+  ["医药", "药品", "药", "耗材"],
+  ["养老", "老人", "老年", "养老院", "养老机构"],
+  ["教育", "学校", "学生", "教师", "学籍"],
+  ["房产", "住房", "房屋", "不动产"],
+  ["就业", "招聘", "岗位", "人才", "社保"],
+  ["税务", "纳税", "税收", "发票"],
+  ["环保", "环境", "污染", "碳排放", "能耗"],
+];
+
+const conversationalWords = [
+  "我想",
+  "我需要",
+  "帮我",
+  "请帮我",
+  "能不能",
+  "可不可以",
+  "有哪些",
+  "有什么",
+  "需要哪些",
+  "可以用哪些",
+  "怎么",
+  "如何",
+  "判断",
+  "分析",
+  "查询",
+  "搜索",
+  "查一下",
+  "了解",
+  "看看",
+  "相关的",
+  "相关",
+  "数据资源",
+  "数据",
+  "资源",
+  "情况",
+  "一辆",
+  "一家",
+];
+
 function normalize(value: unknown) {
   return String(value ?? "").trim().toLowerCase();
 }
 
-function includesKeyword(content: unknown, keyword: string) {
-  return normalize(content).includes(keyword);
+function includesKeyword(content: unknown, keywords: string | string[]) {
+  const normalizedContent = normalize(content);
+  const terms = Array.isArray(keywords) ? keywords : [keywords];
+  return terms.some((term) => term && normalizedContent.includes(normalize(term)));
+}
+
+function inferIntent(keyword: string): SearchIntent | null {
+  const normalizedKeyword = normalize(keyword);
+  const matchedRule = intentRules
+    .map((rule) => ({
+      ...rule,
+      score: rule.keywords.filter((item) => normalizedKeyword.includes(item)).length,
+    }))
+    .filter((rule) => rule.score > 0)
+    .sort((a, b) => b.score - a.score)[0];
+
+  return matchedRule?.intent ?? null;
+}
+
+function buildSearchTerms(keyword: string, intent: SearchIntent | null) {
+  const normalizedKeyword = normalize(keyword);
+  let coreKeyword = normalizedKeyword;
+
+  for (const word of conversationalWords) {
+    coreKeyword = coreKeyword.replaceAll(word, " ");
+  }
+
+  const directTerms = coreKeyword
+    .split(/[\s,，。；;、？！?：:]+/)
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+
+  const expandedTerms = conceptGroups.flatMap((group) =>
+    group.some(
+      (concept) =>
+        normalizedKeyword.includes(concept) ||
+        directTerms.some((term) => term.includes(concept))
+    )
+      ? group
+      : []
+  );
+
+  return Array.from(
+    new Set([
+      normalizedKeyword,
+      ...directTerms,
+      ...expandedTerms,
+      ...(intent?.terms ?? []),
+    ].filter((item) => item.length > 0))
+  );
 }
 
 function getCatalogSourceType(group?: string) {
@@ -55,6 +235,8 @@ export default async function SearchPage({
   const { q: rawQ } = await searchParams;
   const originalKeyword = (rawQ ?? "").trim();
   const q = originalKeyword.toLowerCase();
+  const intent = inferIntent(originalKeyword);
+  const searchTerms = buildSearchTerms(originalKeyword, intent);
 
   const results: SearchResult[] = [];
 
@@ -72,7 +254,7 @@ export default async function SearchPage({
         "ministry" in catalog ? catalog.ministry : "",
       ].join(" ");
 
-      if (includesKeyword(catalogSearchText, q)) {
+      if (includesKeyword(catalogSearchText, searchTerms)) {
         results.push({
           id: `catalog-${catalog.id}`,
           title: catalog.name,
@@ -99,7 +281,7 @@ export default async function SearchPage({
           ]),
         ].join(" ");
 
-        if (includesKeyword(tableSearchText, q)) {
+        if (includesKeyword(tableSearchText, searchTerms)) {
           const matchedFields = (table.fields ?? []).filter((field) =>
             includesKeyword(
               [
@@ -108,7 +290,7 @@ export default async function SearchPage({
                 field.rule,
                 field.description,
               ].join(" "),
-              q
+              searchTerms
             )
           );
 
@@ -143,7 +325,7 @@ export default async function SearchPage({
             field.description,
           ].join(" ");
 
-          if (includesKeyword(fieldSearchText, q)) {
+          if (includesKeyword(fieldSearchText, searchTerms)) {
             results.push({
               id: `field-${catalog.id}-${table.tableName}-${field.fieldName}`,
               title: field.fieldCnName,
@@ -174,7 +356,7 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
     "scenario" in product ? product.scenario : "",
   ].join(" ");
 
-  if (includesKeyword(productSearchText, q)) {
+  if (includesKeyword(productSearchText, searchTerms)) {
     results.push({
       id: `product-${catalog.id}-${
         "id" in product ? product.id : index
@@ -207,7 +389,7 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
         ]),
       ].join(" ");
 
-      if (includesKeyword(domainSearchText, q)) {
+      if (includesKeyword(domainSearchText, searchTerms)) {
         results.push({
           id: `authorized-domain-${domain.id}`,
           title: domain.name,
@@ -228,7 +410,7 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
           ...resource.examples,
         ].join(" ");
 
-        if (includesKeyword(resourceSearchText, q)) {
+        if (includesKeyword(resourceSearchText, searchTerms)) {
           results.push({
             id: `authorized-resource-${domain.id}-${resource.id}`,
             title: resource.name,
@@ -252,7 +434,7 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
         ...industry.scenarios,
       ].join(" ");
 
-      if (includesKeyword(industrySearchText, q)) {
+      if (includesKeyword(industrySearchText, searchTerms)) {
         results.push({
           id: `industry-${industry.id}`,
           title: industry.name,
@@ -277,6 +459,10 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
       if (normalizedTitle === q) score += 200;
       else if (normalizedTitle.includes(q)) score += 100;
       else if (normalize(item.source).includes(q)) score += 40;
+
+      score += searchTerms.filter((term) =>
+        normalize([item.title, item.desc, item.source].join(" ")).includes(term)
+      ).length * 12;
 
       return { ...item, score };
     })
@@ -326,6 +512,52 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
             搜索
           </button>
         </form>
+
+        {q && intent && (
+          <section className="mb-8 overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-white to-red-50/70 shadow-sm">
+            <div className="grid gap-6 p-6 lg:grid-cols-[1.1fr_1.9fr] lg:p-8">
+              <div>
+                <div className="inline-flex items-center gap-2 text-sm font-black text-[#C41E3A]">
+                  <Sparkles className="h-4 w-4" />
+                  智能需求识别
+                </div>
+                <h2 className="mt-3 text-2xl font-black text-slate-900">
+                  {intent.scenario}
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {intent.summary}
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl bg-white p-5 shadow-sm">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    识别领域
+                  </div>
+                  <div className="mt-2 font-black text-slate-800">
+                    {intent.industry}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl bg-white p-5 shadow-sm">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    建议数据组合
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {intent.dataNeeds.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {q && (
           <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -381,6 +613,13 @@ for (const [index, product] of (catalog.products ?? []).entries()) {
                             </span>
                           )}
                         </div>
+
+                        {intent && (
+                          <div className="mb-2 text-xs font-bold text-emerald-700">
+                            推荐理由：可支撑“{intent.scenario}”中的
+                            {intent.dataNeeds.slice(0, 2).join("、")}分析
+                          </div>
+                        )}
 
                         <h2 className="text-xl font-black text-slate-900 transition group-hover:text-[#C41E3A]">
                           {item.title}

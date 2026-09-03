@@ -24,7 +24,7 @@ export default function HomeSearchBox() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
           }}
-          placeholder="搜索数据表、字段、数据产品、部委、应用场景，例如：维修总次数、医保结算、交通运输部、民政部、车辆健康评分"
+          placeholder="描述你的业务需求，例如：我想判断一家企业的经营稳定性"
           className="h-14 flex-1 px-5 text-sm text-slate-700 placeholder:text-slate-400 outline-none"
         />
 
@@ -39,19 +39,13 @@ export default function HomeSearchBox() {
 
       {/* 热门搜索 */}
       <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-slate-400">热门搜索：</span>
+        <span className="text-slate-400">试试这样问：</span>
 
         {[
-          "交通运输部",
-          "民政部",
-          "教育部",
-          "国家卫生健康委",
-          "国家医保局",
-          "公安部",
-          "车维全景动察-01",
-          "车辆健康评分",
-          "医保结算",
-          "养老机构",
+          "判断企业经营风险需要哪些数据",
+          "分析车辆维修和故障情况",
+          "医保结算可以支撑哪些场景",
+          "养老机构评价需要哪些资源",
         ].map((item) => (
           <button
             key={item}

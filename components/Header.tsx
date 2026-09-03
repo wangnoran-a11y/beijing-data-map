@@ -13,6 +13,7 @@ const navItems = [
   { name: "首页", href: "/" },
   { name: "数据目录", href: "/data-catalog" },
   { name: "数据产品", href: "/data-products" },
+  { name: "资源对比", href: "/resource-compare" },
   { name: "数据赋能产业", href: "/industry" },
 ];
 

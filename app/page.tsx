@@ -2,6 +2,7 @@ import Link from "next/link";
 import LoginGate from "@/components/LoginGate";
 import Header from "@/components/Header";
 import HomeSearchBox from "@/components/HomeSearchBox";
+import SmartResourceRecommendations from "@/components/SmartResourceRecommendations";
 import {
   authorizedResourceDomains,
   authorizedResourceSummary,
@@ -713,6 +714,8 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <SmartResourceRecommendations />
       </main>
     </LoginGate>
   );
