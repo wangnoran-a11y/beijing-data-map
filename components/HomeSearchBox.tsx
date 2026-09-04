@@ -1,18 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function HomeSearchBox() {
   const [keyword, setKeyword] = useState("");
   const router = useRouter();
 
-  function handleSearch() {
-    const q = keyword.trim();
+  function handleSearch(value = keyword) {
+    const q = value.trim();
     if (!q) return;
 
-    router.push(`/search?q=${encodeURIComponent(q)}`);
+    const isBusinessQuestion =
+      q.length >= 10 ||
+      /如何|怎么|哪些|需要|判断|分析|评估|评价|规划|组合|场景|风险|能否|可以|支撑|解决|推荐|开发|形成|是否|想/.test(q);
+
+    if (!isBusinessQuestion) {
+      router.push(`/search?q=${encodeURIComponent(q)}`);
+      return;
+    }
+
+    setKeyword(q);
+    window.dispatchEvent(
+      new CustomEvent("datamap:resource-plan", { detail: { question: q } })
+    );
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById("smart-resource-recommendations")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
   return (
@@ -24,16 +41,16 @@ export default function HomeSearchBox() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
           }}
-          placeholder="描述你的业务需求，例如：我想判断一家企业的经营稳定性"
+          placeholder="搜索资源，或描述业务问题让 AI 规划资源组合"
           className="h-14 flex-1 px-5 text-sm text-slate-700 placeholder:text-slate-400 outline-none"
         />
 
         <button
-          onClick={handleSearch}
+          onClick={() => handleSearch()}
           className="flex items-center gap-2 bg-[#C41E3A] px-8 font-bold text-white transition hover:bg-[#A81831]"
         >
-          <Search className="h-4 w-4" />
-          搜索
+          <Sparkles className="h-4 w-4" />
+          智能搜索
         </button>
       </div>
 
@@ -49,9 +66,7 @@ export default function HomeSearchBox() {
         ].map((item) => (
           <button
             key={item}
-            onClick={() =>
-              router.push(`/search?q=${encodeURIComponent(item)}`)
-            }
+            onClick={() => handleSearch(item)}
             className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-red-50 hover:text-[#C41E3A]"
           >
             {item}

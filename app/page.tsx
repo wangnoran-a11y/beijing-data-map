@@ -505,6 +505,8 @@ export default function Home() {
           </div>
         </section>
 
+        <SmartResourceRecommendations />
+
         <section className="mx-auto max-w-7xl px-6 lg:px-10 py-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -715,7 +717,6 @@ export default function Home() {
           </div>
         </section>
 
-        <SmartResourceRecommendations />
       </main>
     </LoginGate>
   );
