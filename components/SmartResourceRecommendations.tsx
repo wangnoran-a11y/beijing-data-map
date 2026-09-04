@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bot, ChevronDown, Database, LoaderCircle, Search, Sparkles, TrendingUp } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown, Database, Sparkles, TrendingUp } from "lucide-react";
 import { authorizedResourceDomains } from "@/data/authorizedResources";
 import styles from "./SmartResourceRecommendations.module.css";
 
@@ -59,11 +59,8 @@ function buildDisplayResources(value: unknown): DisplayResource[] {
 export default function SmartResourceRecommendations() {
   const [active, setActive] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [answerMode, setAnswerMode] = useState<"ai" | "rules" | "">("");
-  const [loading, setLoading] = useState(false);
   const [queryMatches, setQueryMatches] = useState<ReturnType<typeof buildDisplayResources> | null>(null);
+  const [queryQuestion, setQueryQuestion] = useState("");
   const selected = scenarios[active];
 
   const matches = useMemo(() => {
@@ -76,39 +73,17 @@ export default function SmartResourceRecommendations() {
     ).filter((item) => item.score > 0).sort((a, b) => b.score - a.score || b.examples.length - a.examples.length);
   }, [selected]);
 
-  const askAI = useCallback(async (nextQuestion: string) => {
-    const cleanQuestion = nextQuestion.trim();
-    if (!cleanQuestion) return;
-    setQuestion(cleanQuestion);
-    setLoading(true);
-    setAnswer("");
-    setAnswerMode("");
-    try {
-      const response = await fetch("/api/ai-resource-recommendations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: cleanQuestion }),
-      });
-      const data = await response.json();
-      setQueryMatches(buildDisplayResources(data.recommendation?.resources));
-      setAnswer(data.answer || data.error || "暂时无法生成建议，请稍后再试。");
-      setAnswerMode(data.mode === "ai" ? "ai" : data.answer ? "rules" : "");
-    } catch {
-      setAnswer("AI 服务暂未连接，但上方基于现有目录的组合推荐仍可正常使用。");
-      setAnswerMode("");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    function handleResourcePlan(event: Event) {
-      const detail = (event as CustomEvent<{ question?: string }>).detail;
-      if (detail?.question) void askAI(detail.question);
+    function handleRecommendation(event: Event) {
+      const detail = (event as CustomEvent<{ question?: string; resources?: unknown }>).detail;
+      if (!detail?.question) return;
+      setQueryQuestion(detail.question);
+      setQueryMatches(buildDisplayResources(detail.resources));
+      setExpanded(false);
     }
-    window.addEventListener("datamap:resource-plan", handleResourcePlan);
-    return () => window.removeEventListener("datamap:resource-plan", handleResourcePlan);
-  }, [askAI]);
+    window.addEventListener("datamap:recommendation-updated", handleRecommendation);
+    return () => window.removeEventListener("datamap:recommendation-updated", handleRecommendation);
+  }, []);
 
   const visibleMatches = queryMatches ?? matches;
 
@@ -119,7 +94,7 @@ export default function SmartResourceRecommendations() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-black text-[#C41E3A]"><Sparkles className="h-4 w-4" />智能资源推荐</div>
             <h2 className="mt-4 text-3xl font-black text-slate-900">从业务问题出发，组合可用数据资源</h2>
-            <p className="mt-3 text-slate-500">优先推荐现有资源，同时识别热门需求中的资源缺口。</p>
+            <p className="mt-3 text-slate-500">基于资源底座展示可组合资源，智能分析入口已整合至首页顶部。</p>
           </div>
           <div className="inline-flex items-center gap-2 text-sm font-bold text-slate-500"><TrendingUp className="h-4 w-4 text-[#C41E3A]" />场景热度排行</div>
         </div>
@@ -130,21 +105,11 @@ export default function SmartResourceRecommendations() {
 
         <div className={styles.recommendationLayout}>
           <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-            <div className="flex items-center justify-between gap-4"><div><h3 className="text-xl font-black text-slate-900">{queryMatches ? "本次问题智能推荐组合" : `${selected.name}推荐组合`}</h3><p className="mt-1 text-sm text-slate-500">已匹配 {visibleMatches.length} 类现有资源</p></div><Database className="h-7 w-7 text-[#C41E3A]" /></div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="flex items-start justify-between gap-4"><div><h3 className="text-xl font-black text-slate-900">{queryMatches ? "本次问题智能推荐组合" : `${selected.name}推荐组合`}</h3><p className="mt-1 text-sm text-slate-500">已匹配 {visibleMatches.length} 类现有资源</p>{queryQuestion && <p className="mt-2 text-sm font-bold text-[#C41E3A]">“{queryQuestion}”</p>}</div><Database className="h-7 w-7 text-[#C41E3A]" /></div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {visibleMatches.slice(0, expanded ? visibleMatches.length : 6).map((item, index) => <Link key={`${item.domainId}/${item.id}`} href={`/authorized-resources/${item.domainId}/${item.id}`} className="group rounded-2xl border border-slate-100 bg-white p-4 transition hover:border-red-200 hover:shadow-sm"><div className="flex items-center justify-between gap-2"><span className="text-xs font-black text-[#C41E3A]">推荐 {index + 1}</span><span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] text-slate-500">{item.domainName}</span></div><h4 className="mt-2 font-black text-slate-900 group-hover:text-[#C41E3A]">{item.name}</h4><p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{item.examples.slice(0, 4).join("、")}</p></Link>)}
             </div>
             {visibleMatches.length > 6 && <button onClick={() => setExpanded(!expanded)} className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[#C41E3A]">{expanded ? "收起资源" : `查看全部 ${visibleMatches.length} 类资源`}<ChevronDown className={`h-4 w-4 transition ${expanded ? "rotate-180" : ""}`} /></button>}
-          </div>
-
-          <div className={styles.assistantPanel}>
-            <div className="flex items-center gap-2 text-sm font-black text-red-300"><Bot className="h-5 w-5" />AI 资源规划助手</div>
-            <h3 className="mt-3 text-xl font-black">AI 资源组合分析结果</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-300">请在首页顶部统一搜索框输入业务问题，分析结果将在这里展示。</p>
-            {!question && !loading && <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm leading-6 text-slate-300"><Search className="mb-3 h-6 w-6 text-red-300" />例如：判断一家新能源物流企业是否值得授信，需要组合哪些数据？</div>}
-            {question && <div className="mt-5 rounded-2xl bg-slate-800 p-4 text-sm font-bold leading-6 text-white"><span className="mb-1 block text-xs text-red-300">本次分析问题</span>{question}</div>}
-            {loading && <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white/10 p-4 text-sm text-slate-100"><LoaderCircle className="h-5 w-5 animate-spin text-red-300" />正在理解问题、匹配资源并生成组合建议…</div>}
-            {answer && !loading && <div className="mt-4 rounded-2xl bg-white/10 p-4"><div className="mb-3 flex items-center gap-2 text-xs font-black text-red-200">{answerMode === "ai" ? "大模型 + 资源规则联合分析" : answerMode === "rules" ? "资源规则分析（大模型繁忙时自动生成）" : "分析结果"}</div><div className="whitespace-pre-wrap text-sm leading-6 text-slate-100">{answer}</div></div>}
           </div>
         </div>
 
