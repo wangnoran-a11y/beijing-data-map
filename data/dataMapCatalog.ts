@@ -939,7 +939,24 @@ export const dataCatalog = [
     ],
     products: [],
   },
-  {
+   {
+    id: "market-regulation",
+    group: "ministry",
+    ministry: "国家市场监督管理总局",
+    name: "市场监管",
+    source:
+      "国家市场监督管理总局 / 全国组织机构统一社会信用代码数据服务中心",
+    summary:
+      "围绕组织机构统一社会信用代码，展示机构基础信息、信息查询比对、主数据治理、组织机构信息核验治理及四要素核验等数据资源与服务能力。",
+    stats: {
+      tables: 0,
+      fields: 0,
+      records: "待接入",
+    },
+    tables: [],
+    products: [],
+  },
+   {
     id: "finance",
     group: "public",
     name: "金融服务",

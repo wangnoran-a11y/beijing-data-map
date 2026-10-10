@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 北京数据地图 智能搜索模块
 
-## Getting Started
+这是可直接嵌入 Next.js 页面的一期“规则检索兜底”模块，解决当前搜索无结果、业务问题无响应的问题。
 
-First, run the development server:
+## 已实现能力
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 关键词与自然语言业务问题的意图识别
+- 对资源名称、领域、描述、字段、标签和场景的综合匹配
+- 按企业授信、车辆交通、医疗保险、养老服务、绿色低碳生成资源组合
+- 无直接命中时按场景兜底推荐，并提示待拓展资源
+
+## 接入方式
+
+1. 将 `lib/smartSearch.ts` 与 `components/SmartSearchResults.tsx` 放到项目对应目录。
+2. 在首页智能搜索提交成功后，引入并渲染：
+
+```tsx
+<SmartSearchResults query={searchQuery} resources={resources} />
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. `resources` 需转换为 `DataResource[]`。每项至少包含：`id`、`name`、`domain`、`description`、`fields`、`tags`、`scenarios`。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 下一步接入 DeepSeek RAG
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+保留页面不变，将 `buildSearchPlan()` 中的 `matches` 替换为后端 API 返回的向量召回结果；再把资源、表、字段和场景作为上下文提交给 DeepSeek 生成“需求拆解、推荐组合、缺口识别、合规提示”。

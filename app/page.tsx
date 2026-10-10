@@ -31,7 +31,15 @@ const beijingSources = [
   "市规划自然资源委",
 ];
 
-const ministrySources = [
+type MinistrySource = {
+  name: string;
+  connected: boolean;
+  status?: string;
+  href?: string;
+  resources?: string[];
+};
+
+const ministrySources: MinistrySource[] = [
   { name: "交通运输部", connected: true },
   { name: "民政部", connected: true },
   { name: "教育部", connected: true },
@@ -42,7 +50,20 @@ const ministrySources = [
   },
   { name: "国家卫生健康委员会", connected: false },
   { name: "国家医疗保障局", connected: false },
+  {
+    name: "国家市场监督管理总局",
+    connected: true,
+    status: "已接入",
+    href: "/data-catalog/market-regulation",
+  },
 ];
+
+const connectedMinistryCount = ministrySources.filter(
+  (item) => item.connected
+).length;
+
+const otherStatusMinistryCount =
+  ministrySources.length - connectedMinistryCount;
 
 const overseasData = {
   title: "境外企业数据资源",
@@ -268,7 +289,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 lg:px-10 py-8">
+        <section className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-3xl font-black text-slate-900">
@@ -297,9 +318,15 @@ export default function Home() {
                     <Building2 className="h-6 w-6 text-[#C41E3A]" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#C41E3A]">市级公共数据</div>
-                    <h3 className="mt-1 text-xl font-black text-slate-900">北京市公共数据目录</h3>
-                    <p className="mt-1 text-sm text-slate-500">已接入重点市级部门公共数据资源</p>
+                    <div className="text-xs font-bold text-[#C41E3A]">
+                      市级公共数据
+                    </div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">
+                      北京市公共数据目录
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      已接入重点市级部门公共数据资源
+                    </p>
                   </div>
                 </div>
                 <span className="shrink-0 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-[#C41E3A]">
@@ -313,15 +340,22 @@ export default function Home() {
                   [String(authorizedResourceSummary.domainCount), "授权领域"],
                   [String(authorizedResourceSummary.resourceCount), "资源分类"],
                 ].map(([value, label]) => (
-                  <div key={label} className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
-                    <div className="whitespace-nowrap text-[24px] leading-none font-black text-[#C41E3A]">{value}</div>
+                  <div
+                    key={label}
+                    className="rounded-2xl bg-slate-50 px-3 py-4 text-center"
+                  >
+                    <div className="whitespace-nowrap text-[24px] font-black leading-none text-[#C41E3A]">
+                      {value}
+                    </div>
                     <div className="mt-1 text-xs text-slate-500">{label}</div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
-                <div className="mb-3 text-xs font-bold text-slate-400">已接入重点部门</div>
+                <div className="mb-3 text-xs font-bold text-slate-400">
+                  已接入重点部门
+                </div>
                 <div className="grid grid-cols-2 gap-2.5">
                   {beijingSources.map((item) => (
                     <div
@@ -351,9 +385,15 @@ export default function Home() {
                     <Database className="h-6 w-6 text-[#C41E3A]" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#C41E3A]">部委行业数据</div>
-                    <h3 className="mt-1 text-xl font-black text-slate-900">国家部委数据目录</h3>
-                    <p className="mt-1 text-sm text-slate-500">持续推进重点部委数据资源接入</p>
+                    <div className="text-xs font-bold text-[#C41E3A]">
+                      部委行业数据
+                    </div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">
+                      国家部委数据目录
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      持续推进重点部委数据资源接入
+                    </p>
                   </div>
                 </div>
                 <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-600">
@@ -363,76 +403,106 @@ export default function Home() {
 
               <div className="mt-5 grid grid-cols-3 gap-3">
                 {[
-                  ["6", "部委来源"],
-                  ["4", "已接入"],
-                  ["2", "未接入"],
+                  [String(ministrySources.length), "部委来源"],
+                  [String(connectedMinistryCount), "已接入"],
+                  [String(otherStatusMinistryCount), "待接入/未接入"],
                 ].map(([value, label]) => (
-                  <div key={label} className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
-                    <div className="whitespace-nowrap text-[24px] leading-none font-black text-[#C41E3A]">{value}</div>
+                  <div
+                    key={label}
+                    className="rounded-2xl bg-slate-50 px-3 py-4 text-center"
+                  >
+                    <div className="whitespace-nowrap text-[24px] font-black leading-none text-[#C41E3A]">
+                      {value}
+                    </div>
                     <div className="mt-1 text-xs text-slate-500">{label}</div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
-                <div className="mb-3 text-xs font-bold text-slate-400">部委接入情况</div>
+                <div className="mb-3 text-xs font-bold text-slate-400">
+                  部委接入情况
+                </div>
                 <div className="grid grid-cols-2 gap-2.5">
-                  {ministrySources.map((item) =>
-                    item.name === "公安部" ? (
-                      <details
-                        key={item.name}
-                        className="group rounded-xl bg-slate-50 px-3.5 py-2.5 open:ring-1 open:ring-red-100"
-                      >
-                        <summary className="flex min-h-[22px] cursor-pointer list-none items-center justify-between gap-2">
-                          <span className="min-w-0 text-sm font-bold text-slate-700">
-                            {item.name}
-                          </span>
-                          <div className="flex shrink-0 items-center gap-1.5">
-                            <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-bold text-[#C41E3A]">
-                              已接入
-                            </span>
-                            <span className="text-xs text-slate-400 transition group-open:rotate-180">
-                              ▾
-                            </span>
-                          </div>
-                        </summary>
+                  {ministrySources.map((item) => {
+                    const statusText =
+                      item.status ?? (item.connected ? "已接入" : "未接入");
 
-                        <div className="mt-2 border-t border-slate-200 pt-2">
-                          <div className="mb-1.5 text-[10px] font-bold text-slate-400">
-                            已接入2项资源
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {item.resources?.map((resource) => (
-                              <span
-                                key={resource}
-                                className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-slate-600"
-                              >
-                                {resource}
+                    const statusClass = item.connected
+                      ? "bg-red-50 text-[#C41E3A]"
+                      : item.status === "待接入"
+                      ? "bg-amber-50 text-amber-700"
+                      : "bg-slate-200 text-slate-500";
+
+                    if (item.name === "公安部") {
+                      return (
+                        <details
+                          key={item.name}
+                          className="group rounded-xl bg-slate-50 px-3.5 py-2.5 open:ring-1 open:ring-red-100"
+                        >
+                          <summary className="flex min-h-[22px] cursor-pointer list-none items-center justify-between gap-2">
+                            <span className="min-w-0 text-sm font-bold text-slate-700">
+                              {item.name}
+                            </span>
+                            <div className="flex shrink-0 items-center gap-1.5">
+                              <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-bold text-[#C41E3A]">
+                                已接入
                               </span>
-                            ))}
+                              <span className="text-xs text-slate-400 transition group-open:rotate-180">
+                                ▾
+                              </span>
+                            </div>
+                          </summary>
+
+                          <div className="mt-2 border-t border-slate-200 pt-2">
+                            <div className="mb-1.5 text-[10px] font-bold text-slate-400">
+                              已接入2项资源
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {item.resources?.map((resource) => (
+                                <span
+                                  key={resource}
+                                  className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-slate-600"
+                                >
+                                  {resource}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      </details>
+                        </details>
+                      );
+                    }
+
+                    const rowContent = (
+                      <>
+                        <span className="min-w-0 text-sm font-bold text-slate-700">
+                          {item.name}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${statusClass}`}
+                        >
+                          {statusText}
+                        </span>
+                      </>
+                    );
+
+                    return item.href ? (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="flex min-h-[42px] items-center justify-between gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5 transition hover:bg-red-50"
+                      >
+                        {rowContent}
+                      </Link>
                     ) : (
                       <div
                         key={item.name}
                         className="flex min-h-[42px] items-center justify-between gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5"
                       >
-                        <span className="min-w-0 text-sm font-bold text-slate-700">
-                          {item.name}
-                        </span>
-                        <span
-                          className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${
-                            item.connected
-                              ? "bg-red-50 text-[#C41E3A]"
-                              : "bg-slate-200 text-slate-500"
-                          }`}
-                        >
-                          {item.connected ? "已接入" : "未接入"}
-                        </span>
+                        {rowContent}
                       </div>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -453,9 +523,15 @@ export default function Home() {
                     <Globe2 className="h-6 w-6 text-[#C41E3A]" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#C41E3A]">境外企业数据</div>
-                    <h3 className="mt-1 text-xl font-black text-slate-900">境外企业数据资源</h3>
-                    <p className="mt-1 text-sm text-slate-500">欧洲企业信息与信用数据</p>
+                    <div className="text-xs font-bold text-[#C41E3A]">
+                      境外企业数据
+                    </div>
+                    <h3 className="mt-1 text-xl font-black text-slate-900">
+                      境外企业数据资源
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      欧洲企业信息与信用数据
+                    </p>
                   </div>
                 </div>
                 <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500">
@@ -469,16 +545,20 @@ export default function Home() {
                     key={stat.label}
                     className="rounded-2xl bg-slate-50 px-3 py-4 text-center"
                   >
-                    <div className="whitespace-nowrap text-[18px] leading-none font-black text-[#C41E3A]">
+                    <div className="whitespace-nowrap text-[18px] font-black leading-none text-[#C41E3A]">
                       {stat.value}
                     </div>
-                    <div className="mt-2 text-xs text-slate-500">{stat.label}</div>
+                    <div className="mt-2 text-xs text-slate-500">
+                      {stat.label}
+                    </div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
-                <div className="mb-3 text-xs font-bold text-slate-400">主要数据能力</div>
+                <div className="mb-3 text-xs font-bold text-slate-400">
+                  主要数据能力
+                </div>
                 <p className="text-sm leading-6 text-slate-500">
                   储备欧洲企业多维信息资源，覆盖企业主体、治理、经营、财务及信用风险等企业信息。
                 </p>
@@ -507,7 +587,7 @@ export default function Home() {
 
         <SmartResourceRecommendations />
 
-        <section className="mx-auto max-w-7xl px-6 lg:px-10 py-10">
+        <section className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-3xl font-black text-slate-900">
@@ -566,7 +646,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 lg:px-10 py-10">
+        <section className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
           <div className="rounded-[32px] bg-white p-8 shadow-sm">
             <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
@@ -629,7 +709,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 lg:px-10 py-10">
+        <section className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-3xl font-black text-slate-900">
@@ -666,7 +746,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-6 pb-20">
+        <section className="mx-auto max-w-7xl px-6 pb-20 pt-6 lg:px-10">
           <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-2xl font-black text-slate-900">
@@ -716,7 +796,6 @@ export default function Home() {
             ))}
           </div>
         </section>
-
       </main>
     </LoginGate>
   );

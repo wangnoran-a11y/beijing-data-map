@@ -88,6 +88,17 @@ const ministryCatalogs = [
     status: "已接入",
     href: "/data-catalog/education",
   },
+  {
+    id: "market-regulation-ministry",
+    name: "国家市场监督管理总局",
+    shortName: "市场监管",
+    description:
+      "来源于全国组织机构统一社会信用代码数据服务中心，涵盖组织机构基础信息、信息核验治理及四要素核验服务能力；具体接口接入状态待确认。",
+    tags: ["统一社会信用代码", "机构基础信息", "信息核验治理", "四要素核验"],
+    stats: ["1类数据资源", "2项核验服务"],
+    status: "待接入",
+    href: "/data-catalog/market-regulation",
+  },
 ];
 
 export default function DataCatalogPage() {
@@ -480,8 +491,7 @@ export default function DataCatalogPage() {
             </h2>
 
             <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-500">
-              集中展示国家部委数据资源接入情况。当前交通运输部、民政部、教育部、公安部已接入，
-              国家卫生健康委、国家医疗保障局暂未接入。
+              集中展示国家部委行业数据目录及接入情况。当前交通运输部、民政部、教育部、公安部已接入；国家市场监督管理总局相关数据已纳入展示，具体接入状态待确认；国家卫生健康委、国家医疗保障局暂未接入。
             </p>
           </div>
 
@@ -491,6 +501,7 @@ export default function DataCatalogPage() {
                 "transport-ministry",
                 "civil-ministry",
                 "education-ministry",
+                "market-regulation-ministry",
               ].includes(item.id);
 
               const cardContent = (
@@ -623,15 +634,11 @@ function StatCard({
       </div>
 
       <div className="mt-3 flex items-end gap-1">
-        <span className="text-4xl font-black text-[#C41E3A]">
-          {value}
-        </span>
+        <span className="text-4xl font-black text-[#C41E3A]">{value}</span>
         <span className="mb-1 text-sm text-slate-400">{unit}</span>
       </div>
 
-      <div className="mt-2 text-xs leading-5 text-slate-400">
-        {note}
-      </div>
+      <div className="mt-2 text-xs leading-5 text-slate-400">{note}</div>
     </div>
   );
 }
